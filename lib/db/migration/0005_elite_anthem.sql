@@ -1,0 +1,1 @@
+ALTER TABLE "twoFactorConfirmation" ALTER COLUMN "expires" DROP NOT NULL;
