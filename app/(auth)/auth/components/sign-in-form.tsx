@@ -11,7 +11,7 @@ import { signIn } from "next-auth/react";
 import { FaFacebookF } from "react-icons/fa";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { TriangleAlert } from "lucide-react";
+
 import { toast } from "sonner";
 import { signInUser } from "@/actions/auth";
 import { DEFAULT_REDIRECT_LOGIN } from "@/routes";
