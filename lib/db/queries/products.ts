@@ -9,16 +9,16 @@ export const getProductIds = async (): Promise<{ id: string }[] | []> => {
   try {
     const response = await fetch(url.toString());
     if (!response.ok) {
-      throw new Error("failed fetch productIds, please try again later");
+      return [];
     }
     const data = await response.json();
 
-    if (!data.productsId || !Array.isArray(data.productsId)) {
+    if (!data) {
       console.error("Unexpected response format:", data);
       return [];
     }
 
-    return data.productsId;
+    return data;
   } catch (error) {
     return [];
   }

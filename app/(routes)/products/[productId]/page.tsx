@@ -6,6 +6,7 @@ import { getFeaturedProduct, getProductById, getProductIds } from "@/lib/db/quer
 
 export const generateStaticParams = async () => {
   const productsId = await getProductIds();
+
   if (!productsId || productsId.length === 0) {
     return [];
   }
