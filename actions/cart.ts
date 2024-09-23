@@ -374,6 +374,7 @@ export const addToCart = async (formData: FormData): Promise<{ error?: string; s
 
     return result;
   } catch (error) {
+    console.log("Failed add to cart", error);
     return {
       error: "Failed add to cart",
     };

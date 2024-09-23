@@ -48,41 +48,35 @@ const reducer = (state: CartItemWithProduct[], action: IAction): CartItemWithPro
   );
 
   const existingCartItems = [...state];
+  let updatedCart = existingCartItems;
+
   switch (action.type) {
     case "ADD_TO_CART":
       if (existingItem) {
-        const updatedCart = existingCartItems.map((item) => (item.id === existingItem.id ? { ...item, quantity: item.quantity + 1 } : item));
-        return updatedCart;
+        updatedCart = existingCartItems.map((item) => (item.id === existingItem.id ? { ...item, quantity: item.quantity + 1 } : item));
+      } else {
+        updatedCart = [...state, { ...(action.payload as CartItemPayload), quantity: 1 }];
       }
-      return [...state, { ...(action.payload as CartItemPayload), quantity: 1 }];
-
+      return updatedCart;
     case "INCREASE_CART_QUANTITY":
       if (existingItem && existingItem.quantity > 0) {
-        const updatedCart = existingCartItems.map((item) => (item.id === existingItem.id ? { ...item, quantity: item.quantity + 1 } : item));
-        return updatedCart;
+        updatedCart = existingCartItems.map((item) => (item.id === existingItem.id ? { ...item, quantity: item.quantity + 1 } : item));
       }
-
-      return state;
+      return updatedCart;
     case "DECREASE_CART_QUANTITY":
       if (existingItem) {
         if (existingItem.quantity === 1) {
-          const updateCart = existingCartItems.filter((item) => item.id !== action.payload?.id);
-          return updateCart;
+          updatedCart = existingCartItems.filter((item) => item.id !== action.payload?.id);
         } else if (existingItem.quantity && existingItem.quantity > 1) {
-          const updatedCart = existingCartItems.map((item) =>
-            item.id === action.payload?.id ? { ...item, quantity: action.payload.quantity - 1 } : item
-          );
-          return updatedCart;
+          updatedCart = existingCartItems.map((item) => (item.id === action.payload?.id ? { ...item, quantity: action.payload.quantity - 1 } : item));
         }
       }
-      return state;
+      return updatedCart;
     case "UPDATE_CART_QUANTITY":
       if (existingItem) {
-        const updatedCart = existingCartItems.map((item) => (item.id === action.payload?.id ? { ...item, quantity: action.payload.quantity } : item));
-        return updatedCart;
+        updatedCart = existingCartItems.map((item) => (item.id === action.payload?.id ? { ...item, quantity: action.payload.quantity } : item));
       }
-
-      return state;
+      return updatedCart;
     case "UPDATE_CART_BY_VARIATION":
       const previouseVariationCartItem = existingCartItems.find(
         (item) => item.productId === action.payload?.productId && item.variationId === action.payload?.variationId
@@ -112,11 +106,13 @@ const reducer = (state: CartItemWithProduct[], action: IAction): CartItemWithPro
       );
       return updatedCartItems;
     case "REMOVE_CART_ITEM":
-      return state.filter((item) => item.id !== action.payload?.id);
+      updatedCart = state.filter((item) => item.id !== action.payload?.id);
+      return updatedCart;
     case "CLEAR_CART_ITEM":
-      return [];
+      updatedCart = [];
+      return updatedCart;
     default:
-      return state;
+      return updatedCart;
   }
 };
 

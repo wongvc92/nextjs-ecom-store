@@ -56,10 +56,6 @@ export const ProductByIdProvider: React.FC<ProductProviderProps> = ({ product, c
   const memoizedSelectedProductPrice = useMemo(() => {
     return findSelectedProductPrice(variationId, nestedVariationId, product);
   }, [nestedVariationId, product, variationId]);
-  console.log("variationId", variationId);
-  console.log("nestedVariationId", nestedVariationId);
-  console.log("memoizedSelectedProductPrice", memoizedSelectedProductPrice);
-  console.log("product", product);
 
   const memoizedSelectedProductImage = useMemo(() => {
     return findSelectedProductImage(variationId, product);

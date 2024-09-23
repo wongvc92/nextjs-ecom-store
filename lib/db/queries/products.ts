@@ -4,6 +4,25 @@ import { validate as isUuid } from "uuid";
 
 const BASE_URL = process.env.NEXT_PUBLIC_ADMIN_URL!;
 
+export const getProductIds = async (): Promise<{ id: string }[] | []> => {
+  const url = new URL(`${BASE_URL}/api/productsId`);
+  try {
+    const response = await fetch(url.toString());
+    if (!response.ok) {
+      throw new Error("failed fetch productIds, please try again later");
+    }
+    const data = await response.json();
+
+    if (!data.productsId || !Array.isArray(data.productsId)) {
+      console.error("Unexpected response format:", data);
+      return [];
+    }
+
+    return data.productsId;
+  } catch (error) {
+    return [];
+  }
+};
 export async function getProducts(searchParams: IProductsQuery) {
   const parseResult = productsQuerySchema.safeParse(searchParams);
   if (!parseResult.success) {
