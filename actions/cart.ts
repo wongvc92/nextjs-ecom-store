@@ -44,14 +44,12 @@ export const increaseCartQuantity = async (formData: FormData): Promise<{ error?
       existingcartItem.variationType,
       id
     );
-
+    revalidatePath("/");
     return result;
   } catch (error: any) {
     return {
       error: `Failed increase quantity: ${error?.message}`,
     };
-  } finally {
-    revalidateTag("/carts");
   }
 };
 
@@ -87,7 +85,7 @@ export const decreaseCartQuantity = async (formData: FormData): Promise<{ error?
       );
       return result;
     }
-
+    revalidatePath("/");
     return {
       success: "cart updated",
     };
@@ -95,8 +93,6 @@ export const decreaseCartQuantity = async (formData: FormData): Promise<{ error?
     return {
       error: `Failed decrease quantity`,
     };
-  } finally {
-    revalidateTag("/carts");
   }
 };
 
@@ -132,7 +128,7 @@ export const updateCartQuantity = async (formData: FormData): Promise<{ error?: 
       );
       return result;
     }
-
+    revalidatePath("/");
     return {
       success: "cart updated",
     };
@@ -140,8 +136,6 @@ export const updateCartQuantity = async (formData: FormData): Promise<{ error?: 
     return {
       error: `Failed to update cart: ${error?.message}`,
     };
-  } finally {
-    revalidateTag("/carts");
   }
 };
 
@@ -193,14 +187,12 @@ export const updatecartItemsByVariation = async (formData: FormData): Promise<{ 
       newcartItem.nestedVariationId,
       newcartItem.variationType
     );
-
+    revalidatePath("/");
     return result;
   } catch (error: any) {
     return {
       error: `Failed to update cart: ${error?.message}`,
     };
-  } finally {
-    revalidateTag("/carts");
   }
 };
 
@@ -258,14 +250,12 @@ export const updatecartItemsByNestedVariation = async (formData: FormData): Prom
       newcartItem.nestedVariationId,
       newcartItem.variationType
     );
-
+    revalidatePath("/");
     return result;
   } catch (error: any) {
     return {
       error: `Failed to update cart: ${error?.message}`,
     };
-  } finally {
-    revalidateTag("/carts");
   }
 };
 
@@ -288,7 +278,7 @@ export const removeCart = async (formData: FormData): Promise<{ error?: string; 
       };
     }
     await deleteCartItem(existingcartItem.id);
-
+    revalidatePath("/");
     return {
       success: "cart item deleted",
     };
@@ -296,8 +286,6 @@ export const removeCart = async (formData: FormData): Promise<{ error?: string; 
     return {
       error: `Failed to delete cart: ${error}`,
     };
-  } finally {
-    revalidatePath("/");
   }
 };
 
@@ -312,6 +300,7 @@ export const removeAllcartItems = async () => {
     for (const cartItem of cart.cartItems) {
       await deleteCartItem(cartItem.id);
     }
+    revalidatePath("/");
     return {
       success: "cart item deleted",
     };
@@ -319,9 +308,6 @@ export const removeAllcartItems = async () => {
     return {
       error: `Failed to delete cart: ${error?.message}`,
     };
-  } finally {
-    revalidateTag("/carts");
-    revalidatePath("/");
   }
 };
 
@@ -371,14 +357,12 @@ export const addToCart = async (formData: FormData): Promise<{ error?: string; s
       updatedProductInCart.nestedVariationId,
       variationType
     );
-
+    revalidatePath("/");
     return result;
   } catch (error) {
     console.log("Failed add to cart", error);
     return {
       error: "Failed add to cart",
     };
-  } finally {
-    revalidatePath("/");
   }
 };
