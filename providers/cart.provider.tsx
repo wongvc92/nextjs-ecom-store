@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useMemo, useOptimistic } from "react";
 import { Cart, CartItemWithProduct } from "@/lib/db/queries/carts";
-import { findCartItemsQuantity, findSubShippingFeeCartItems, findSubtotalCartItems } from "@/lib/utils";
+import { findSubShippingFeeCartItems } from "@/lib/helper/shippingHelpers";
+import { findCartItemsQuantity, findSubtotalCartItems } from "@/lib/helper/cartHelpers";
 
 interface CartItemPayload extends CartItemWithProduct {
   newVariationId?: string | null;

@@ -6,7 +6,7 @@ import { useSwipeable } from "react-swipeable";
 import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImageThumbnail from "./image-thumbnail";
-import { useProductByIdContext } from "@/app/(routes)/products/[productId]/components/productById.provider";
+import { useProductByIdContext } from "@/providers/productById.provider";
 
 const ProductImageSlider = () => {
   const [activeIndex, setActiveIndex] = useState(0);

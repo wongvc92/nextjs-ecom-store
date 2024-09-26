@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-const Loading = () => {
+const ProductListSkeleton = () => {
   return (
     <div className="min-h-screen w-full px-4 md:container ">
       <div className="flex gap-4 h-10 mb-10 overflow-hidden">
@@ -32,4 +32,4 @@ const Loading = () => {
   );
 };
 
-export default Loading;
+export default ProductListSkeleton;

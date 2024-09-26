@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
 import React, { useTransition } from "react";
-
 import { IProduct } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
-import { useCartContext } from "@/components/carts/cart.context";
-import { useFavouriteItemContext } from "@/app/(routes)/favourites/components/favourite.Item.provider";
+import { useCartContext } from "@/providers/cart.provider";
+import { useFavouriteItemContext } from "@/providers/favourite.Item.provider";
 import { toast } from "sonner";
 import { addToCart } from "@/actions/cart";
 

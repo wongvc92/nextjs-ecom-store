@@ -2,7 +2,7 @@
 
 import CartList from "./cart-list";
 import NoCart from "./no-cart";
-import { useCartContext } from "./cart.context";
+import { useCartContext } from "../../providers/cart.provider";
 
 const Cart = () => {
   const { cartItems } = useCartContext();

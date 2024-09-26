@@ -1,5 +1,11 @@
 import React from "react";
 import ResetForm from "../components/reset-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+  description: "Manage your authentication",
+};
 
 const ResetPage = () => {
   return (

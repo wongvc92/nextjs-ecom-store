@@ -1,19 +1,23 @@
+import { IbannerImage } from "@/lib/types";
+
 const baseUrl = process.env.NEXT_PUBLIC_ADMIN_URL!;
 
-export async function getBanners() {
+export const getBanners = async (): Promise<IbannerImage[] | null> => {
+  const url = new URL(`${baseUrl}/api/banners`);
   try {
-    const url = `${baseUrl}/api/banners`;
+    const res = await fetch(url.toString(), {
+      cache: "force-cache",
+      next: { tags: ["banners"] },
+    });
 
-    const res = await fetch(url);
     if (!res.ok) {
-      throw new Error("Failed fetch banner images");
+      return null;
     }
     const data = await res.json();
 
-    return {
-      bannerImages: data.bannerImages,
-    };
+    return data.bannerImages;
   } catch (error) {
-    throw new Error("Failed fetch banner images");
+    console.error("Failed fetch banner images");
+    return null;
   }
-}
+};

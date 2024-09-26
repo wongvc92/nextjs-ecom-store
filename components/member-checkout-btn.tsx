@@ -2,21 +2,14 @@
 
 import React, { useTransition } from "react";
 import { Button } from "./ui/button";
-
 import { toast } from "sonner";
 import Spinner from "./spinner";
-
 import { useSession } from "next-auth/react";
-import { getCheckoutcartItems } from "@/lib/db/queries/carts";
 import { memberCheckout } from "@/actions/checkout";
 
 const MemberCheckoutButton = () => {
   const { data } = useSession();
   const [isPending, startTransition] = useTransition();
-
-  const customer = {
-    customerId: data?.user?.id,
-  };
 
   const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
     startTransition(async () => {

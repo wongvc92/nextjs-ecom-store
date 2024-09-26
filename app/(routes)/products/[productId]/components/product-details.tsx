@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 import ProductModal from "./product-modal";
 import FavouriteButton from "@/components/favourite-btn";
-import { capitalizeSentenceFirstChar, currencyFormatter, shortenedProductDescription } from "@/lib/utils";
+import { currencyFormatter } from "@/lib/utils";
 import AddCartBtn from "@/app/(routes)/products/[productId]/components/add-cart-btn";
-import { useProductByIdContext } from "@/app/(routes)/products/[productId]/components/productById.provider";
+import { useProductByIdContext } from "@/providers/productById.provider";
 import VariationButton from "@/components/variation-button";
 import NestedVariationButton from "@/components/nested-variation.button";
 

@@ -8,9 +8,9 @@ import { addToCart } from "@/actions/cart";
 import { IProduct } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
 
-import { useProductByIdContext } from "@/app/(routes)/products/[productId]/components/productById.provider";
+import { useProductByIdContext } from "@/providers/productById.provider";
 import { toast } from "sonner";
-import { useCartContext } from "@/components/carts/cart.context";
+import { useCartContext } from "@/providers/cart.provider";
 
 interface AddCartBtnProps {
   product?: IProduct;

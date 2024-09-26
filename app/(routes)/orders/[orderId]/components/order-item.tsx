@@ -1,14 +1,12 @@
 import { HashIcon, MapPin, ReceiptText, ScrollText } from "lucide-react";
-
-import React, { useMemo } from "react";
-import { currencyFormatter, findOrderItemsShippingSubTotal, findOrderItemsSubTotal } from "@/lib/utils";
+import { currencyFormatter } from "@/lib/utils";
 import OrderHistory from "./order-history";
 import OrderPaymentInfo from "./order-payment-info";
 import OrderLogisticInfo from "./order-logistic-info";
 import { IOrder } from "@/lib/types";
 
 interface OrderItemProps {
-  order: IOrder;
+  order: IOrder | null;
 }
 
 const OrderItem: React.FC<OrderItemProps> = ({ order }) => {

@@ -1,12 +1,9 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
-
 import ColorFilter from "./color-filter";
 import SizeFilter from "./size-filter";
 import PriceFilter from "./price-filter";
 import CustomPriceFilter from "./custom-price-filter";
-import ResetFilterButton from "./reset-filter-button";
 import { useState } from "react";
 
 const FilterSidebar = () => {

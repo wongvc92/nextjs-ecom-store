@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import FavouritesModal from "./favourites-modal";
-import { useFavouriteItemContext } from "@/app/(routes)/favourites/components/favourite.Item.provider";
+import { useFavouriteItemContext } from "@/providers/favourite.Item.provider";
 import AddCartBtn from "./add-cart-btn";
 import { useModal } from "@/providers/modal.provider";
 import Modal from "@/components/ui/modal";

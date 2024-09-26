@@ -1,7 +1,7 @@
 "use client";
 
 import CartCard from "./cart-card";
-import { useCartContext } from "./cart.context";
+import { useCartContext } from "../../providers/cart.provider";
 
 const CartList = () => {
   const { cartItems } = useCartContext();

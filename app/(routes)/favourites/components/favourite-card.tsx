@@ -5,8 +5,8 @@ import Image from "next/image";
 import React from "react";
 import CheckVariationButton from "./check-variation-btn";
 import FavouriteButton from "@/components/favourite-btn";
-import { FavouriteItemProvider } from "@/app/(routes)/favourites/components/favourite.Item.provider";
-import { getMinMaxPrices, shortenedProductName } from "@/lib/utils";
+import { FavouriteItemProvider } from "@/providers/favourite.Item.provider";
+import { getMinMaxPrices } from "@/lib/utils";
 import Link from "next/link";
 import { FavouriteItemWithProduct } from "@/lib/db/queries/favourites";
 

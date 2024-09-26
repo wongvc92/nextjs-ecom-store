@@ -1,7 +1,7 @@
 "use client";
 
 import { IProduct } from "@/lib/types";
-import { currencyFormatter, shortenedProductName } from "@/lib/utils";
+import { currencyFormatter } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import Image from "next/image";

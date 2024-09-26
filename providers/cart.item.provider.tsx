@@ -2,8 +2,9 @@
 
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
-import { findSelectedProductImage, findSelectedProductPrice } from "@/lib/utils";
+
 import { IProduct } from "@/lib/types";
+import { findSelectedProductImage, findSelectedProductPrice } from "@/lib/helper/productHelpers";
 
 interface ICartItemContext {
   cartItem?: CartItemWithProduct | null;

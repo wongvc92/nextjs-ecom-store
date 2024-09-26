@@ -2,8 +2,8 @@
 
 import React, { useRef, useTransition } from "react";
 import { toast } from "sonner";
-import { useCartItemContext } from "./cart.item.context";
-import { useCartContext } from "./cart.context";
+import { useCartItemContext } from "../../providers/cart.item.provider";
+import { useCartContext } from "../../providers/cart.provider";
 import { useSession } from "next-auth/react";
 import { updatecartItemsByVariation } from "@/actions/cart";
 

@@ -4,7 +4,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useProductFilter } from "@/providers/product.filter.provider";
 import { ChevronDown } from "lucide-react";
-
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -14,7 +13,7 @@ interface SizeFilterProps {
 }
 const SizeFilter: React.FC<SizeFilterProps> = ({ showFilter, toggleOpen }) => {
   const searchParams = useSearchParams();
-  const { replace, push } = useRouter();
+  const { replace } = useRouter();
   const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
 

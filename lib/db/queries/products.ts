@@ -1,3 +1,4 @@
+import { IProduct } from "@/lib/types";
 import { addSearchParams } from "@/lib/utils";
 import { IProductsQuery, productsQuerySchema } from "@/lib/validation/productSchemas";
 import { validate as isUuid } from "uuid";
@@ -23,13 +24,18 @@ export const getProductIds = async (): Promise<{ id: string }[] | []> => {
     return [];
   }
 };
-export async function getProducts(searchParams: IProductsQuery) {
+
+export const getProducts = async (searchParams: IProductsQuery): Promise<{ products: IProduct[]; productCounts: number; perPage: number }> => {
   const parseResult = productsQuerySchema.safeParse(searchParams);
   if (!parseResult.success) {
     // Handle validation errors
     const errors = parseResult.error.errors.map((err) => `${err.path.join(".")} - ${err.message}`);
-
-    return { error: `Invalid search parameters: ${errors.join("; ")}` };
+    console.error(errors);
+    return {
+      products: [],
+      productCounts: 0,
+      perPage: 0,
+    };
   }
 
   let url = new URL(`${BASE_URL}/api/products`);
@@ -37,25 +43,39 @@ export async function getProducts(searchParams: IProductsQuery) {
   addSearchParams(url, searchParams);
 
   try {
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), {
+      cache: "force-cache",
+    });
 
     if (!response.ok) {
-      throw new Error(`Fetch error: ${response.statusText}`);
+      console.error(`Fetch error: ${response.statusText}`);
+      return {
+        products: [],
+        productCounts: 0,
+        perPage: 0,
+      };
     }
 
     const data = await response.json();
 
-    return { products: data.products, productCounts: data.productCounts, perPage: data.perPage };
+    return { products: data.products as IProduct[], productCounts: data.productCounts, perPage: data.perPage };
   } catch (error) {
-    return { error: "Failed fetch products" };
+    console.error("Failed fetch products :", error);
+    return {
+      products: [],
+      productCounts: 0,
+      perPage: 0,
+    };
   }
-}
+};
 
 export const getFeaturedProduct = async () => {
   const url = `${BASE_URL}/api/products/featured`;
 
   try {
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), {
+      cache: "force-cache",
+    });
     if (!response.ok) {
       throw new Error(`Fetch error: ${response.statusText}`);
     }
@@ -68,11 +88,10 @@ export const getFeaturedProduct = async () => {
   }
 };
 
-export const getProductById = async (productId: string) => {
+export const getProductById = async (productId: string): Promise<IProduct | null> => {
   if (!isUuid(productId)) {
-    return {
-      error: "Invalid product Id",
-    };
+    console.error("Invalid product Id");
+    return null;
   }
 
   const url = new URL(`${BASE_URL}/api/products/${encodeURIComponent(productId)}`);
@@ -80,13 +99,16 @@ export const getProductById = async (productId: string) => {
   try {
     const response = await fetch(url.toString(), { cache: "force-cache" });
     if (!response.ok) {
-      throw new Error(`Fetch error: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error(`[Fetch Error]: Failed to fetch product (${response.status} - ${response.statusText}): ${errorText}`);
+      return null;
     }
 
     const data = await response.json();
 
-    return { product: data.product };
+    return data.product;
   } catch (error) {
-    return { error: "Failed fetch product" };
+    console.error("Failed  to fetch product: ", error);
+    return null;
   }
 };

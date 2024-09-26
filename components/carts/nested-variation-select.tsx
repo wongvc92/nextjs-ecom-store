@@ -1,8 +1,8 @@
 "use client";
 
 import { toast } from "sonner";
-import { useCartItemContext } from "./cart.item.context";
-import { useCartContext } from "./cart.context";
+import { useCartItemContext } from "../../providers/cart.item.provider";
+import { useCartContext } from "../../providers/cart.provider";
 import { useRef, useTransition } from "react";
 import { updatecartItemsByNestedVariation } from "@/actions/cart";
 

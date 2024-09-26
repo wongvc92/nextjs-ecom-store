@@ -1,17 +1,22 @@
 "use client";
 
 import * as React from "react";
-import { addDays, format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
-export function DatePickerWithRange({ className, title }: React.HTMLAttributes<HTMLDivElement>) {
+interface DatePickerWithRangeProps {
+  className?: string;
+  title: string;
+  dateFromParams: string;
+  dateToParams: string;
+}
+export function DatePickerWithRange({ className, title, dateFromParams, dateToParams }: DatePickerWithRangeProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: undefined, // Two weeks ago
     to: undefined, // Today
@@ -23,15 +28,15 @@ export function DatePickerWithRange({ className, title }: React.HTMLAttributes<H
   const updateSearchParams = (selectedDate: DateRange | undefined) => {
     const params = new URLSearchParams(searchParams.toString());
     if (selectedDate?.from) {
-      params.set("dateFrom", selectedDate.from.toISOString());
+      params.set(dateFromParams, selectedDate.from.toISOString());
     } else {
-      params.delete("dateFrom");
+      params.delete(dateFromParams);
     }
 
     if (selectedDate?.to) {
-      params.set("dateTo", selectedDate.to.toISOString());
+      params.set(dateToParams, selectedDate.to.toISOString());
     } else {
-      params.delete("dateTo");
+      params.delete(dateToParams);
     }
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
@@ -45,6 +50,7 @@ export function DatePickerWithRange({ className, title }: React.HTMLAttributes<H
       <Popover>
         <PopoverTrigger asChild>
           <Button
+            type="button"
             id="date"
             variant="ghost"
             size="sm"

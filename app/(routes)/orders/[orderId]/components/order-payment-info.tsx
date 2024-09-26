@@ -2,8 +2,7 @@
 
 import { IOrder } from "@/lib/types";
 import { currencyFormatter } from "@/lib/utils";
-import { findOrderItemSubTotal } from "@/lib/utilts/orderHelpers";
-
+import { findOrderItemSubTotal } from "@/lib/helper/orderHelpers";
 import { ImageIcon, LucideBadgeDollarSign } from "lucide-react";
 import Image from "next/image";
 import React, { useMemo } from "react";

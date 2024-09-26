@@ -1,16 +1,20 @@
 import React, { Suspense } from "react";
 import OrderItem from "./components/order-item";
-import { unstable_cache } from "next/cache";
 import { getOrderById } from "@/lib/db/queries/orders";
+import { Metadata } from "next";
+import { auth } from "@/auth";
 
 interface OrderPageByIdProps {
   params: { orderId: string };
 }
 
+export const metadata: Metadata = {
+  title: "Order Details",
+  description: "View detailed information about your order, including items, shipping status, and payment information.",
+};
+
 const OrderPageById = async ({ params }: OrderPageByIdProps) => {
-  console.log("params.orderId", params.orderId);
   const order = await getOrderById(params.orderId);
-  console.log("OrderPageById", order);
 
   return (
     <Suspense>

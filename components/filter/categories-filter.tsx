@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-
 import { useProductFilter } from "@/providers/product.filter.provider";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 

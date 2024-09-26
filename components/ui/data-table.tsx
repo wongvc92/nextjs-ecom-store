@@ -6,25 +6,19 @@ import {
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   VisibilityState,
-  PaginationState,
 } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "./input";
+
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "./dropdown-menu";
-
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Label } from "./label";
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
-
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 

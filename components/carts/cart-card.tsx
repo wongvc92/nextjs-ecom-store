@@ -1,25 +1,19 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { Separator } from "@/components/ui/separator";
-import {
-  capitalizeSentenceFirstChar,
-  currencyFormatter,
-  findSelectedProductImage,
-  findSelectedProductPrice,
-  findTotalPricePerCartItem,
-  shortenedProductName,
-} from "@/lib/utils";
 import Image from "next/image";
-
 import RemoveCartBtn from "./remove-cart-btn";
 import VariationSelect from "./variation-select";
 import NestedVariationSelect from "./nested-variation-select";
 import CartCounter from "./cart-counter";
 
-import { CartItemProvider } from "./cart.item.context";
+import { CartItemProvider } from "../../providers/cart.item.provider";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
 import { IProduct } from "@/lib/types";
+import { findTotalPricePerCartItem } from "@/lib/helper/cartHelpers";
+import { findSelectedProductImage, findSelectedProductPrice, shortenedProductName } from "@/lib/helper/productHelpers";
+import { capitalizeSentenceFirstChar, currencyFormatter } from "@/lib/utils";
 
 interface CartCardProps {
   cartItem: CartItemWithProduct;

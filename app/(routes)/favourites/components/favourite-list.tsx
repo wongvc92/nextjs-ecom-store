@@ -12,7 +12,7 @@ const FavouriteList = () => {
       {!favouriteProducts || favouriteProducts?.length === 0 ? (
         <NoFavourite />
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-10 ">
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
           {favouriteProducts.map((item) => (
             <FavouriteCard key={item.id} favouriteProduct={item} />
           ))}

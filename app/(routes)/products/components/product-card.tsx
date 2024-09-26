@@ -2,7 +2,7 @@
 
 import FavouriteButton from "@/components/favourite-btn";
 import { IProduct } from "@/lib/types";
-import { getMinMaxPrices, shortenedProductName } from "@/lib/utils";
+import { getMinMaxPrices } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";

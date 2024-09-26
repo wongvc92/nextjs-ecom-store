@@ -1,31 +1,36 @@
 import React, { Suspense } from "react";
-import { OrderClient } from "./components/Client";
+import { Metadata } from "next";
+import { Heading } from "@/components/ui/heading";
+import { Separator } from "@/components/ui/separator";
+import StatsLoading from "@/components/loading/stats-loading";
+import OrderStats from "./components/order-stats";
+import FiltersLoading from "@/components/loading/filters-loading";
+import TableLoading from "@/components/loading/table-loading";
+import OrderTable from "./components/order-table";
+import { OrderFilters } from "./components/order-filters";
 
-import { getOrders, getOrderStatsCount } from "@/lib/db/queries/orders";
-import { IOrdersQuery } from "@/lib/validation/orderSchemas";
+export const metadata: Metadata = {
+  title: "Orders",
+  description: "View and manage your orders. Track the status of your orders including pending, shipped, completed, and cancelled orders.",
+};
 
-const OrderPage = async ({ searchParams }: { searchParams: IOrdersQuery }) => {
-  const perPage = searchParams.perPage || "5";
-
-  const { orders, ordersCount } = await getOrders(searchParams);
-
-  const { allOrdersCount, cancelledOrdersCount, completedOrdersCount, pendingOrdersCount, shippedOrdersCount, toShipOrdersCount } =
-    await getOrderStatsCount();
-
+const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   return (
-    <Suspense fallback="loading...">
-      <OrderClient
-        data={orders}
-        orderCount={ordersCount}
-        totalPage={Math.ceil(allOrdersCount / parseInt(perPage))}
-        allOrdersCount={allOrdersCount}
-        cancelledOrdersCount={cancelledOrdersCount}
-        completedOrdersCount={completedOrdersCount}
-        pendingOrdersCount={pendingOrdersCount}
-        shipppedOrdersCount={shippedOrdersCount}
-        toShipOrdersCount={toShipOrdersCount}
-      />
-    </Suspense>
+    <section className="py-8 px-4 flex-col space-y-4 w-full">
+      <div className="flex  items-center justify-between bg-white rounded-md p-4 shadow-sm dark:bg-inherit border">
+        <Heading title="Orders" description="Manage orders for your store" />
+      </div>
+      <Separator className="my-4" />
+      <Suspense fallback={<StatsLoading />}>
+        <OrderStats />
+      </Suspense>
+      <Suspense fallback={<FiltersLoading />}>
+        <OrderFilters />
+      </Suspense>
+      <Suspense fallback={<TableLoading />}>
+        <OrderTable searchParams={searchParams} />
+      </Suspense>
+    </section>
   );
 };
 

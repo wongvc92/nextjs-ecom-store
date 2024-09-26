@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingBag } from "lucide-react";
 import Cart from "./carts/cart";
-import { useCartContext } from "./carts/cart.context";
+import { useCartContext } from "../providers/cart.provider";
 import CartCheckout from "./carts/cart-checkout";
 import { useSearchParams } from "next/navigation";
 import { removeAllcartItems } from "@/actions/cart";

@@ -5,7 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { cartItems } from "@/lib/db/schema/cartItems";
 import { CartItemWithProduct, getCart, getExistingCartItem } from "@/lib/db/queries/carts";
-import { createCart } from "@/lib/cart/createCart";
+
 import {
   addToCartSchema,
   decreaseCartSchema,
@@ -15,7 +15,7 @@ import {
   updatecartItemsByVariationSchema,
   updateCartQuantitySchema,
 } from "@/lib/validation/cartSchemas";
-import { addNewCartItem, deleteCartItem, updateExistingCartQuantity, validateAndUpdateCart } from "@/lib/cart/cartHelpers";
+import { addNewCartItem, createCart, deleteCartItem, updateExistingCartQuantity, validateAndUpdateCart } from "@/lib/services/cartServices";
 
 export const increaseCartQuantity = async (formData: FormData): Promise<{ error?: string; success?: string }> => {
   try {

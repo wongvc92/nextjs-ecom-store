@@ -1,26 +1,19 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-
 import { ProductFilterProvider } from "@/providers/product.filter.provider";
-
 import { FavouriteProvider } from "@/providers/favourite.provider";
 import Footer from "@/components/footer";
-
-import { unstable_cache } from "next/cache";
-
-import { CartProvider } from "@/components/carts/cart.context";
+import { CartProvider } from "@/providers/cart.provider";
 import { getFavouritesByUserId } from "@/lib/db/queries/favourites";
 import { getCategories, getColors, getSizes } from "@/lib/db/queries/filters";
 import { Toaster } from "sonner";
 import { getCart } from "@/lib/db/queries/carts";
-import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 import { ModalProvider } from "@/providers/modal.provider";
-import Modal from "@/components/ui/modal";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,10 +27,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   const categories = await getCategories();
   const sizes = await getSizes();
   const colors = await getColors();
-  const favouriteProducts = await getFavouritesByUserId();
+  const favouriteProducts = (await getFavouritesByUserId(session?.user.id as string)) ?? [];
   const cart = await getCart();
 
   return (
@@ -47,7 +41,6 @@ export default async function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system">
             <SessionProvider>
               <Toaster richColors position="top-center" />
-
               <FavouriteProvider value={favouriteProducts}>
                 <CartProvider cart={cart}>
                   <ProductFilterProvider value={{ categories, sizes, colors }}>

@@ -1,22 +1,16 @@
+import { auth } from "@/auth";
+import { getOrderStatsCount } from "@/lib/db/queries/orders";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 
-interface OrderStatsProps {
-  allOrdersCount: number;
-  cancelledOrdersCount: number;
-  completedOrdersCount: number;
-  pendingOrdersCount: number;
-  shipppedOrdersCount: number;
-  toShipOrdersCount: number;
-}
-const OrderStats: React.FC<OrderStatsProps> = ({
-  allOrdersCount,
-  cancelledOrdersCount,
-  completedOrdersCount,
-  pendingOrdersCount,
-  shipppedOrdersCount,
-  toShipOrdersCount,
-}) => {
+const OrderStats = async () => {
+  const session = await auth();
+  if (!session?.user.id) {
+    redirect("/auth/sign-in");
+  }
+  const { allOrdersCount, cancelledOrdersCount, completedOrdersCount, pendingOrdersCount, toShipOrdersCount, shippedOrdersCount } =
+    await getOrderStatsCount(session.user.id);
   const PRODUCT_STATS = [
     {
       id: 1,
@@ -45,7 +39,7 @@ const OrderStats: React.FC<OrderStatsProps> = ({
     {
       id: 5,
       label: "Shipped",
-      count: shipppedOrdersCount,
+      count: shippedOrdersCount,
       url: "/orders?page=1&perPage=5&status=shipped",
     },
     {

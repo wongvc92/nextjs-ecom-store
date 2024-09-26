@@ -2,7 +2,6 @@
 
 import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import Image from "next/image";
-
 import VariationButton from "@/components/variation-button";
 import NestedVariationButton from "@/components/nested-variation.button";
 import AddCartBtn from "./add-cart-btn";

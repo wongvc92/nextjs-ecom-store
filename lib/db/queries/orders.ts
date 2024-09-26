@@ -1,20 +1,18 @@
-import { auth } from "@/auth";
 import { addSearchParams } from "@/lib/utils";
-
-import { ensureAuthenticated } from "@/lib/utilts/authHelpers";
 import { IOrdersQuery, orderQuerySchema } from "@/lib/validation/orderSchemas";
 import { validate as isUuid } from "uuid";
+import { IOrder } from "@/lib/types";
+
 const BASE_URL = process.env.NEXT_PUBLIC_ADMIN_URL!;
 
-export async function getOrders(searchParams: IOrdersQuery) {
-  const session = await ensureAuthenticated();
-
+export async function getOrders(searchParams: IOrdersQuery, userId: string) {
   const parsed = orderQuerySchema.safeParse(searchParams);
   if (!parsed.success) {
     const errorMessage = parsed.error.errors.map((err) => `${err.path.join(".")} - ${err.message}`);
-    console.log("errorMessage", errorMessage);
+    console.error(errorMessage);
     return {
-      error: errorMessage,
+      orders: null,
+      ordersCount: 0,
     };
   }
 
@@ -25,80 +23,87 @@ export async function getOrders(searchParams: IOrdersQuery) {
     const response = await fetch(url.toString(), {
       method: "GET",
       headers: {
-        "X-User-ID": session.user.id,
+        "X-User-ID": userId,
       },
+      cache: "force-cache",
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch order: ${response.status} ${response.statusText}`);
+      return {
+        orders: null,
+        ordersCount: 0,
+      };
     }
 
     const data = await response.json();
-    console.log(data);
+
     return { orders: data.orders, ordersCount: data.ordersCount };
   } catch (error: any) {
     console.error(`[Failed to fetch order]: ${error}`);
-    throw error;
+    return {
+      orders: null,
+      ordersCount: 0,
+    };
   }
 }
 
-export async function getOrderById(orderId: string) {
-  console.log("orderId", orderId);
-  await ensureAuthenticated();
+export const getOrderById = async (orderId: string): Promise<IOrder | null> => {
   if (!isUuid(orderId)) {
-    return {
-      error: "Something went wrong",
-    };
+    return null;
   }
 
   const url = new URL(`${BASE_URL}/api/orders/${encodeURIComponent(orderId)}`);
 
   try {
-    const response = await fetch(url.toString());
-    console.log("Response status:", response.status);
+    const response = await fetch(url.toString(), {
+      cache: "force-cache",
+    });
+
     if (!response.ok) {
-      throw new Error("failed fetch orders");
+      const errorText = await response.text();
+      console.error(`[Fetch Error]: Failed to fetch orders (${response.status} - ${response.statusText}): ${errorText}`);
+      return null;
     }
 
     const data = await response.json();
 
-    return data.order;
+    return data.order as IOrder;
   } catch (error: any) {
     console.error(`[Failed fetch orders]: ${error}`);
-    return {
-      error: "[Failed fetch orders]",
-    };
+    return null;
   }
-}
+};
 
-export const getOrderStatsCount = async () => {
-  const session = await ensureAuthenticated();
-
-  console.log("session.user.id", session.user.id);
+export const getOrderStatsCount = async (userId: string) => {
   const url = new URL(`${BASE_URL}/api/orders/statsCount`);
+  let statsCount = {
+    allOrdersCount: 0,
+    cancelledOrdersCount: 0,
+    completedOrdersCount: 0,
+    pendingOrdersCount: 0,
+    shippedOrdersCount: 0,
+    toShipOrdersCount: 0,
+  };
   try {
     const response = await fetch(url.toString(), {
       headers: {
-        "X-User-ID": session.user.id,
+        "X-User-ID": userId,
       },
+      cache: "force-cache",
     });
 
-    // Log the response status
-    console.log("Response status:", response.status);
-
     if (!response.ok) {
-      throw new Error("Failed fetch stats count for orders");
+      return statsCount;
     }
 
     const data = await response.json();
 
-    console.log("data", data);
-
     if (!data) {
-      throw new Error("Failed fetch stats count for orders");
+      return statsCount;
     }
 
     return {
+      ...statsCount,
       allOrdersCount: data.allOrdersCount,
       cancelledOrdersCount: data.cancelledOrdersCount,
       completedOrdersCount: data.completedOrdersCount,
@@ -108,6 +113,6 @@ export const getOrderStatsCount = async () => {
     };
   } catch (error) {
     console.log("Failed fetch stats count for orders", error);
-    throw error;
+    return statsCount;
   }
 };

@@ -3,8 +3,8 @@
 import { decreaseCartQuantity } from "@/actions/cart";
 import React, { useTransition } from "react";
 import { toast } from "sonner";
-import { useCartItemContext } from "./cart.item.context";
-import { useCartContext } from "./cart.context";
+import { useCartItemContext } from "../../providers/cart.item.provider";
+import { useCartContext } from "../../providers/cart.provider";
 
 const DecreaseCartCounter = () => {
   const [isPending, startTransition] = useTransition();

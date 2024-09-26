@@ -6,8 +6,8 @@ import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/di
 import { Input } from "@/components/ui/input";
 import { useRef, useTransition } from "react";
 import { toast } from "sonner";
-import { useCartItemContext } from "./cart.item.context";
-import { useCartContext } from "./cart.context";
+import { useCartItemContext } from "../../providers/cart.item.provider";
+import { useCartContext } from "../../providers/cart.provider";
 import { useModal } from "@/providers/modal.provider";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
 import Modal from "../ui/modal";

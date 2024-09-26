@@ -1,6 +1,5 @@
 "use client";
 
-import { INestedVariation, IProduct, IVariation } from "@/lib/types";
 import {
   areAllNoStock,
   findSelectedNestedVariation,
@@ -9,7 +8,8 @@ import {
   findSelectedProductStock,
   findSelectedVariation,
   isVariationNotSelected,
-} from "@/lib/utils";
+} from "@/lib/helper/productHelpers";
+import { INestedVariation, IProduct, IVariation } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { createContext, useContext, useMemo } from "react";
 

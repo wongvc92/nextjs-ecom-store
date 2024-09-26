@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db";
-import { Favourite, favourites as favouritesTable } from "../db/schema/favourites";
+import { favourites as favouritesTable } from "../db/schema/favourites";
 
 export const removeFavourite = async (favouriteId: string) => {
   try {

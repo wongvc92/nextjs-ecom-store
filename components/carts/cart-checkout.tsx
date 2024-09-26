@@ -2,21 +2,15 @@
 
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, Truck } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect } from "react";
-import { toast } from "sonner";
-import { useCartContext } from "./cart.context";
-import {
-  capitalizeSentenceFirstChar,
-  currencyFormatter,
-  findSelectedProductPrice,
-  findTotalPricePerCartItem,
-  findTotalShippingFeePerItem,
-} from "@/lib/utils";
+import React, { useCallback } from "react";
+import { useCartContext } from "../../providers/cart.provider";
+import { capitalizeSentenceFirstChar, currencyFormatter } from "@/lib/utils";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
 import dynamic from "next/dynamic";
 import { IProduct } from "@/lib/types";
-import { removeAllcartItems, removeCart } from "@/actions/cart";
+import { findTotalShippingFeePerItem } from "@/lib/helper/shippingHelpers";
+import { findSelectedProductPrice } from "@/lib/helper/productHelpers";
+import { findTotalPricePerCartItem } from "@/lib/helper/cartHelpers";
 
 const MemberCheckoutButton = dynamic(() => import("@/components/member-checkout-btn"), { ssr: false });
 const GuestCheckOutButton = dynamic(() => import("@/components/guest-checkout-btn"), { ssr: false });

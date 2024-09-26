@@ -1,12 +1,10 @@
 import ProductCard from "./product-card";
-import { IProduct } from "@/lib/types";
 import ResetFilterButton from "@/components/filter/reset-filter-button";
+import { getProducts } from "@/lib/db/queries/products";
+import { IProductsQuery } from "@/lib/validation/productSchemas";
 
-interface IProductList {
-  products?: IProduct[] | null;
-}
-
-const ProductList: React.FC<IProductList> = ({ products }) => {
+const ProductList = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
+  const { products } = await getProducts(searchParams as IProductsQuery);
   return (
     <>
       {!products || products.length === 0 ? (

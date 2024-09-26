@@ -1,4 +1,4 @@
-import { IProduct } from "../types";
+import { IOrderItem, IProduct } from "../types";
 
 export const findOrderItemdVariationName = (variationId: string, product: IProduct): string => {
   if (!product || !variationId) return "";
@@ -31,4 +31,20 @@ export const findOrderItemdNestedVariationName = (variationId: string, nestedVar
 export const findOrderItemSubTotal = (quantity: number, Price: number): number => {
   if (!quantity || !Price) return 0;
   return quantity * Price;
+};
+
+export const findOrderItemsSubTotal = (orderItems: IOrderItem[]) => {
+  if (!orderItems) return 0;
+  return orderItems.reduce((acc, item) => {
+    const itemSubTotalPriceInCents = item.priceInCents * item.quantity;
+    return acc + itemSubTotalPriceInCents;
+  }, 0);
+};
+
+export const findOrderItemsShippingSubTotal = (orderItems: IOrderItem[]) => {
+  if (!orderItems) return 0;
+  return orderItems.reduce((acc, item) => {
+    const itemTotalPriceInCents = item.shippingFeeInCents * item.quantity;
+    return acc + itemTotalPriceInCents;
+  }, 0);
 };

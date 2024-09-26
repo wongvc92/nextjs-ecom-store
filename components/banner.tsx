@@ -1,8 +1,11 @@
-import React from "react";
 import ImageSlider from "./image-slider";
-import { IbannerImage } from "@/lib/types";
+import { getBanners } from "@/lib/db/queries/banners";
 
-const Banner = ({ bannerImages }: { bannerImages: IbannerImage[] }) => {
+const Banner = async () => {
+  const bannerImages = await getBanners();
+  if (!bannerImages) {
+    return null;
+  }
   return (
     <div className="w-full">
       <ImageSlider images={bannerImages} autoSlide={true} autoSlideInterval={3000} />

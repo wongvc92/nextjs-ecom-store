@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import { signIn } from "next-auth/react";
 import { FaFacebookF } from "react-icons/fa";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
 import { toast } from "sonner";
 import { signInUser } from "@/actions/auth";
 import { DEFAULT_REDIRECT_LOGIN } from "@/routes";

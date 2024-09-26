@@ -2,8 +2,8 @@
 
 import { increaseCartQuantity } from "@/actions/cart";
 import React, { useTransition } from "react";
-import { useCartItemContext } from "./cart.item.context";
-import { useCartContext } from "./cart.context";
+import { useCartItemContext } from "../../providers/cart.item.provider";
+import { useCartContext } from "../../providers/cart.provider";
 import { toast } from "sonner";
 
 const IncreaseCartCounter = () => {

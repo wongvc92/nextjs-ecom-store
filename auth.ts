@@ -1,22 +1,20 @@
 import NextAuth from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "./lib/db";
-
 import { getUserById, getUserFromDb } from "./lib/db/queries/users";
 import { AuthError } from "next-auth";
 import { authConfig } from "./auth.config";
 import { UserRoleEnum } from "./@types/next-auth";
-
 import Google from "next-auth/providers/google";
 import Credentials from "@auth/core/providers/credentials";
-
 import bcrypt from "bcrypt";
 import { twoFactorConfirmations, users } from "./lib/db/schema/users";
 import { eq } from "drizzle-orm";
 import { getTwoFactorConfirmationByUserId } from "./lib/db/queries/two-factor-confirmation";
 import { getAccoutByUserId } from "./lib/db/queries/auth";
-import { mergeAnonymouseCartIntoUserCart } from "./lib/cart/mergeAnonymouseCartIntoUserCart";
+
 import { signInSchema } from "./lib/validation/authSchemas";
+import { mergeAnonymouseCartIntoUserCart } from "./lib/services/cartServices";
 
 export const { handlers, auth, signOut, signIn } = NextAuth({
   ...authConfig,

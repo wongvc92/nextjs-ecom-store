@@ -2,6 +2,7 @@ import { capitalizeSentenceFirstChar } from "@/lib/utils";
 import { Bike, Icon, Laptop, Popcorn, Shirt, SofaIcon, Wrench } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+
 const CATEGORY = [
   { id: 1, label: "apparel", icon: Shirt, path: "#" },
   { id: 2, label: "sport", icon: Bike, path: "#" },
@@ -10,6 +11,7 @@ const CATEGORY = [
   { id: 5, label: "tools", icon: Wrench, path: "#" },
   { id: 5, label: "food", icon: Popcorn, path: "#" },
 ] as const;
+
 const ShopByCategory = () => {
   return (
     <div className="px-4 space-y-4">

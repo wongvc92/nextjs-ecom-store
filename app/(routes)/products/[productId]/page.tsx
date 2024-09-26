@@ -1,8 +1,9 @@
-import { Suspense } from "react";
-import Product from "./components/product";
-import { ProductByIdProvider } from "@/app/(routes)/products/[productId]/components/productById.provider";
-import Loading from "./loading";
-import { getFeaturedProduct, getProductById, getProductIds } from "@/lib/db/queries/products";
+import { ProductByIdProvider } from "@/providers/productById.provider";
+import { getProductById, getProductIds } from "@/lib/db/queries/products";
+import ProductDetails from "./components/product-details";
+import ProductImageSlider from "./components/product-image-slider";
+import RelatedProducts from "../../../../components/related-products";
+import { Metadata } from "next";
 
 export const generateStaticParams = async () => {
   const productsId = await getProductIds();
@@ -16,17 +17,40 @@ export const generateStaticParams = async () => {
   }));
 };
 
+export async function generateMetadata({ params }: { params: { productId: string } }): Promise<Metadata> {
+  const product = await getProductById(params.productId);
+  const productName = product?.name || "Product";
+
+  return {
+    title: `${productName} - Buy Now at Our Store`,
+    description: `Explore details, features, and pricing for ${productName}. Find related products and discover more items tailored to your preferences.`,
+  };
+}
+
 const ProductPageById = async ({ params }: { params: { productId: string } }) => {
   const { productId } = params;
-  const { product } = await getProductById(productId);
-  const { featuredProducts } = await getFeaturedProduct();
+  const product = await getProductById(productId);
+
+  if (!product) {
+    return <div className="max-w-4xl min-h-screen mx-auto py-10">Product not found</div>;
+  }
 
   return (
-    <Suspense fallback={<Loading />}>
-      <ProductByIdProvider product={product}>
-        <Product featuredProducts={featuredProducts} />
-      </ProductByIdProvider>
-    </Suspense>
+    <ProductByIdProvider product={product}>
+      <section className="max-w-4xl min-h-screen mx-auto py-10">
+        <div className="flex flex-col sm:flex-row w-full md:px-4 gap-4">
+          <div className="w-full md:w-1/2">
+            <ProductImageSlider />
+          </div>
+          <div className="w-full md:w-1/2 ">
+            <ProductDetails />
+          </div>
+        </div>
+        <div className="w-full">
+          <RelatedProducts />
+        </div>
+      </section>
+    </ProductByIdProvider>
   );
 };
 

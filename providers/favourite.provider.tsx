@@ -5,7 +5,7 @@ import { IProduct } from "@/lib/types";
 import { createContext, useContext, useMemo, useOptimistic } from "react";
 
 interface IFavouriteContext {
-  favouriteProducts?: FavouriteItemWithProduct[];
+  favouriteProducts: FavouriteItemWithProduct[] | null;
   dispatch: (action: IAction) => void;
 }
 

@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { getCart } from "@/lib/db/queries/carts";
+import { redirect } from "next/navigation";
 
 export const guestCheckout = async () => {
   const cart = await getCart();
@@ -28,11 +29,11 @@ export const guestCheckout = async () => {
 export const memberCheckout = async () => {
   const session = await auth();
   if (!session) {
-    return null;
+    return redirect("/auth/sign-in");
   }
 
   const cart = await getCart();
-  console.log("checkout cart", cart);
+
   const customer = {
     customerId: session?.user?.id,
   };
