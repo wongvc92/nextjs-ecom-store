@@ -5,14 +5,14 @@ export const getColors = async () => {
   try {
     const response = await fetch(url, { cache: "force-cache" });
     if (!response.ok) {
-      return null;
+      return [];
     }
     const data = await response.json();
 
     return data.colorNames as string[];
   } catch (error) {
     console.log("Failed fetch colors variations: ", error);
-    return null;
+    return [];
   }
 };
 

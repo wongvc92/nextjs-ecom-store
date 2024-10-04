@@ -21,6 +21,7 @@ export const getProductIds = async (): Promise<{ id: string }[] | []> => {
 
     return data;
   } catch (error) {
+    console.error("failed fetch product ids:", error);
     return [];
   }
 };
@@ -84,7 +85,8 @@ export const getFeaturedProduct = async () => {
 
     return { featuredProducts: data.featuredProducts };
   } catch (error) {
-    return { error: "Failed fetch product" };
+    console.error("Failed fetch featured products :", error);
+    return { error: "Failed fetch featured products" };
   }
 };
 
@@ -108,7 +110,7 @@ export const getProductById = async (productId: string): Promise<IProduct | null
 
     return data.product;
   } catch (error) {
-    console.error("Failed  to fetch product: ", error);
+    console.error("Failed  to fetch product by Id: ", error);
     return null;
   }
 };

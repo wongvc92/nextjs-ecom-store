@@ -4,7 +4,6 @@ import ProductDetails from "./components/product-details";
 import ProductImageSlider from "./components/product-image-slider";
 import RelatedProducts from "../../../../components/related-products";
 import { Metadata } from "next";
-import { Suspense } from "react";
 
 export const generateStaticParams = async () => {
   const productsId = await getProductIds();
