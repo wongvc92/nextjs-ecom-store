@@ -18,7 +18,6 @@ export const updateCartQuantitySchema = z.object({
 
 export const updatecartItemsByVariationSchema = z.object({
   id: z.string().uuid(),
-  productId: z.string().uuid(),
   quantity: z.coerce.number().int().positive(),
   newVariationId: z.string().uuid(),
 });
@@ -37,7 +36,6 @@ export const removeCartSchema = z.object({
 export const updatecartItemsByNestedVariationSchema = z.object({
   id: z.string().uuid(),
   quantity: z.coerce.number().int().positive(),
-  ProductId: z.string().uuid(),
   newNestedVariationId: z.string().uuid(),
 });
 

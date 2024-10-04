@@ -1,19 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import FavouritesModal from "./favourites-modal";
 import { useFavouriteItemContext } from "@/providers/favourite.Item.provider";
 import AddCartBtn from "./add-cart-btn";
-import { useModal } from "@/providers/modal.provider";
-import Modal from "@/components/ui/modal";
-import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import Image from "next/image";
+
 import VariationButton from "@/components/variation-button";
 import NestedVariationButton from "@/components/nested-variation.button";
+import { currencyFormatter } from "@/lib/utils";
+import { DrawerModal } from "./drawer-modal";
+import { useState } from "react";
+import Image from "next/image";
 
 const CheckVariationButton = () => {
-  const { favouriteProduct, selectedImage, selectedPrice } = useFavouriteItemContext();
-  const { closeModal, openModal } = useModal();
+  const { favouriteProduct, selectedPrice, selectedImage } = useFavouriteItemContext();
+  const [isOpen, setIsOpen] = useState(false);
 
   const isVariation = () => {
     if (favouriteProduct?.variationType === "NESTED_VARIATION" || favouriteProduct?.variationType === "VARIATION") {
@@ -26,43 +26,45 @@ const CheckVariationButton = () => {
     if (!isVariation()) {
       return;
     } else {
-      openModal("favouritesModal");
+      setIsOpen(true);
     }
   };
   return (
-    <>
+    <div>
       {!isVariation() ? (
-        <AddCartBtn product={favouriteProduct} onClose={closeModal} />
+        <AddCartBtn product={favouriteProduct} onClose={() => setIsOpen(false)} />
       ) : (
         <Button type="button" variant="outline" onClick={handleClick} className="rounded-full w-full">
           {isVariation() ? "Select variation" : "Add to cart"}
         </Button>
       )}
-      <Modal modalName="favouritesModal">
-        <DialogHeader>
-          <DialogTitle className="text-left">Select variation</DialogTitle>
-          <span className="text-left">RM{selectedPrice}</span>
-          <DialogDescription className="text-left pt-5">Choose</DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-col gap-6">
-          <div className="space-y-4 flex-col  md:pl-4 md:flex-row w-full flex gap-6">
-            <div className="aspect-square w-full md:w-1/2 relative overflow-hidden rounded-md ">
+      <DrawerModal
+        isOpen={isOpen}
+        closeModal={() => setIsOpen(false)}
+        title={favouriteProduct?.name ?? ""}
+        description={currencyFormatter(selectedPrice)}
+      >
+        <div className="flex flex-col gap-6 p-4 md:p-0">
+          <div className="space-y-4 flex-col md:flex-row w-full flex gap-6 ">
+            <div className="h-[200px] w-[200px]  relative overflow-hidden rounded-md md:w-full">
               <Image src={selectedImage} alt="image" fill className="object-cover" />
             </div>
 
-            <div className="flex flex-col gap-2 ">
+            <div className="flex flex-col gap-2 w-full">
+              <p>Select variation</p>
               <VariationButton product={favouriteProduct} />
               <NestedVariationButton product={favouriteProduct} />
             </div>
           </div>
-          <AddCartBtn product={favouriteProduct} onClose={closeModal} />
+          <AddCartBtn
+            product={favouriteProduct}
+            onClose={() => {
+              setIsOpen(false);
+            }}
+          />
         </div>
-
-        {/* {showSelectButton()} */}
-        {/* <div>{children}</div> */}
-      </Modal>
-    </>
+      </DrawerModal>
+    </div>
   );
 };
 

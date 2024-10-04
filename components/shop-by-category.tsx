@@ -1,5 +1,5 @@
 import { capitalizeSentenceFirstChar } from "@/lib/utils";
-import { Bike, Icon, Laptop, Popcorn, Shirt, SofaIcon, Wrench } from "lucide-react";
+import { Bike, Laptop, Popcorn, Shirt, SofaIcon, Wrench } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 

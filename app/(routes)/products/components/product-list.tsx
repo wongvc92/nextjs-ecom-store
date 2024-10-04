@@ -5,8 +5,9 @@ import { IProductsQuery } from "@/lib/validation/productSchemas";
 
 const ProductList = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   const { products } = await getProducts(searchParams as IProductsQuery);
+  console.log(products);
   return (
-    <>
+    <div>
       {!products || products.length === 0 ? (
         <div className="flex justify-center items-center">
           <div className="flex flex-col items-center  gap-4">
@@ -21,7 +22,7 @@ const ProductList = async ({ searchParams }: { searchParams: { [key: string]: st
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

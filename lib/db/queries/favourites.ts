@@ -11,41 +11,35 @@ export interface FavouriteItemWithProduct extends Favourite {
   isLiked: boolean;
 }
 
-export const getFavouritesByUserId = unstable_cache(
-  async (userId: string): Promise<FavouriteItemWithProduct[] | null> => {
-    if (!userId) return null;
+export const getFavouritesByUserId = async (userId: string): Promise<FavouriteItemWithProduct[] | null> => {
+  if (!userId) return null;
 
-    const userFavouritesProductId = await db.select().from(favourites).where(eq(favourites.userId, userId));
+  const userFavouritesProductId = await db.select().from(favourites).where(eq(favourites.userId, userId));
 
-    if (!userFavouritesProductId) {
-      return null;
-    }
-    let itemsWithProducts: FavouriteItemWithProduct[] | null;
-    try {
-      itemsWithProducts = await Promise.all(
-        userFavouritesProductId.map(async (item) => {
-          const product = await getProductById(item.productId);
-          return { ...item, product: (product as IProduct) || null, isLiked: true };
-        })
-      );
-
-      const itemWithNullProducts = itemsWithProducts.filter((item) => item.product === null);
-      const itemWithOutNullProducts = itemsWithProducts.filter((item) => item.product !== null);
-      for (const item of itemWithNullProducts) {
-        await removeFavourite(item.id);
-        revalidateTag("favourites");
-      }
-      return itemWithOutNullProducts;
-    } catch (error) {
-      console.error("Failed get favourites by user Id: ", error);
-      return null;
-    }
-  },
-  ["favourites"],
-  {
-    tags: ["favourites"],
+  if (!userFavouritesProductId) {
+    return null;
   }
-);
+  let itemsWithProducts: FavouriteItemWithProduct[] | null;
+  try {
+    itemsWithProducts = await Promise.all(
+      userFavouritesProductId.map(async (item) => {
+        const product = await getProductById(item.productId);
+        return { ...item, product: (product as IProduct) || null, isLiked: true };
+      })
+    );
+
+    const itemWithNullProducts = itemsWithProducts.filter((item) => item.product === null);
+    const itemWithOutNullProducts = itemsWithProducts.filter((item) => item.product !== null);
+    for (const item of itemWithNullProducts) {
+      await removeFavourite(item.id);
+      revalidateTag("favourites");
+    }
+    return itemWithOutNullProducts;
+  } catch (error) {
+    console.error("Failed get favourites by user Id: ", error);
+    return null;
+  }
+};
 
 // export const getUserFavouriteCounts = unstable_cache(
 //   async (): Promise<{ favouriteCounts?: number; error?: string } | null> => {
@@ -102,27 +96,21 @@ export const getFavouritesByUserId = unstable_cache(
 //   }
 // };
 
-export const getUserFavouriteByProductId = unstable_cache(
-  async (productId: string, userId: string) => {
-    try {
-      const [existingFavourite] = await db
-        .select({
-          id: favourites.id,
-          productId: favourites.productId,
-        })
-        .from(favourites)
-        .where(and(eq(favourites.userId, userId), eq(favourites.productId, productId)));
+export const getUserFavouriteByProductId = async (productId: string, userId: string) => {
+  try {
+    const [existingFavourite] = await db
+      .select({
+        id: favourites.id,
+        productId: favourites.productId,
+      })
+      .from(favourites)
+      .where(and(eq(favourites.userId, userId), eq(favourites.productId, productId)));
 
-      if (!existingFavourite) return null;
+    if (!existingFavourite) return null;
 
-      return existingFavourite;
-    } catch (error: any) {
-      console.error("Failed get User Favourite By ProductId: ", error);
-      return null;
-    }
-  },
-  ["favourites"],
-  {
-    tags: ["favourites"],
+    return existingFavourite;
+  } catch (error: any) {
+    console.error("Failed get User Favourite By ProductId: ", error);
+    return null;
   }
-);
+};

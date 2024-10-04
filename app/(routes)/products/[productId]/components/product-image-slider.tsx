@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -18,7 +18,7 @@ const ProductImageSlider = () => {
 
   useEffect(() => {
     if (v1) {
-      const index = product?.variations?.findIndex((item) => item.name === v1);
+      const index = product?.variations?.findIndex((item) => item.id === v1);
       if (index !== -1 && index !== undefined) {
         setVariationImage(product?.variations[index]?.image || null);
       } else {
@@ -29,10 +29,10 @@ const ProductImageSlider = () => {
     }
   }, [product?.variations, v1]);
 
-  const handleImageUrl = (imageIndex: number) => {
+  const handleImageUrl = useCallback((imageIndex: number) => {
     setActiveIndex(imageIndex);
     setVariationImage(null);
-  };
+  }, []);
 
   const handlePrevImage = useMemo(() => {
     return () => {

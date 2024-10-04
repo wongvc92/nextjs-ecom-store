@@ -3,7 +3,6 @@
 import React, { useTransition } from "react";
 import { Button } from "./ui/button";
 import Spinner from "./spinner";
-
 import { useSession } from "next-auth/react";
 import { guestCheckout } from "@/actions/checkout";
 import { toast } from "sonner";

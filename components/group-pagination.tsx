@@ -39,7 +39,7 @@ const GroupPagination: React.FC<ProductPaginationProps> = ({ totalPages }) => {
   }
 
   return (
-    <>
+    <div>
       {totalPages > 0 && (
         <Pagination>
           <PaginationContent>
@@ -64,7 +64,7 @@ const GroupPagination: React.FC<ProductPaginationProps> = ({ totalPages }) => {
           </PaginationContent>
         </Pagination>
       )}
-    </>
+    </div>
   );
 };
 

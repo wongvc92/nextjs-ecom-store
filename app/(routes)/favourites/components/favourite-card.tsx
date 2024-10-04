@@ -18,7 +18,7 @@ const FavouriteCard: React.FC<FavouriteCardProps> = ({ favouriteProduct }) => {
     <FavouriteItemProvider favouriteProduct={favouriteProduct?.product}>
       <div className="flex flex-col">
         <div className="relative overflow-hidden rounded-md w-full aspect-square">
-          <Link href={`/products/${favouriteProduct?.id}`}>
+          <Link href={`/products/${favouriteProduct?.productId}`}>
             <Image src={favouriteProduct?.product?.productImages[0].url as string} alt="IMAGE" fill className="object-cover" />
           </Link>
           <FavouriteButton product={favouriteProduct?.product} className="absolute top-2 right-2 bg-white rounded-full shadow-md p-1 z-10" />
@@ -26,7 +26,7 @@ const FavouriteCard: React.FC<FavouriteCardProps> = ({ favouriteProduct }) => {
         <div>
           <div className="flex flex-col  w-full p-2">
             <p className="text-sm line-clamp-2 capitalize">{favouriteProduct?.product?.name as string}</p>
-            <p className="text-sm">RM {getMinMaxPrices(favouriteProduct?.product as IProduct)}</p>
+            <p className="text-sm">{getMinMaxPrices(favouriteProduct?.product as IProduct)}</p>
           </div>
           <CheckVariationButton />
         </div>

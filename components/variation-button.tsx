@@ -58,7 +58,7 @@ const VariationButton = ({ product }: { product?: IProduct }) => {
   };
 
   return (
-    <>
+    <div>
       {((product && product.variationType === "NESTED_VARIATION") || (product && product.variationType === "VARIATION")) &&
         product.variations &&
         product.variations.length > 0 && (
@@ -88,7 +88,7 @@ const VariationButton = ({ product }: { product?: IProduct }) => {
             </div>
           </div>
         )}
-    </>
+    </div>
   );
 };
 

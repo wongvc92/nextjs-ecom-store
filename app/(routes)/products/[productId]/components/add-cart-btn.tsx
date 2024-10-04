@@ -7,7 +7,6 @@ import React, { useTransition } from "react";
 import { addToCart } from "@/actions/cart";
 import { IProduct } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
-
 import { useProductByIdContext } from "@/providers/productById.provider";
 import { toast } from "sonner";
 import { useCartContext } from "@/providers/cart.provider";
@@ -19,6 +18,7 @@ interface AddCartBtnProps {
 const AddCartBtn: React.FC<AddCartBtnProps> = ({ product }) => {
   const [isPending, startTransition] = useTransition();
   const { areAllNoStock, isVariationNotSelected, selectedVariation, selectedNestedVariation } = useProductByIdContext();
+  console.log("selectedVariation", selectedVariation);
   const { dispatch } = useCartContext();
 
   const addCart = async () => {

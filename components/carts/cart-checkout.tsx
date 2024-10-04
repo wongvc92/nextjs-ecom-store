@@ -1,8 +1,8 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import { ShoppingBag, Truck } from "lucide-react";
-import React, { useCallback } from "react";
+import { ChevronDownIcon, ShoppingBag, Truck } from "lucide-react";
+import React, { useCallback, useState } from "react";
 import { useCartContext } from "../../providers/cart.provider";
 import { capitalizeSentenceFirstChar, currencyFormatter } from "@/lib/utils";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
@@ -10,14 +10,15 @@ import dynamic from "next/dynamic";
 import { IProduct } from "@/lib/types";
 import { findTotalShippingFeePerItem } from "@/lib/helper/shippingHelpers";
 import { findSelectedProductPrice } from "@/lib/helper/productHelpers";
-import { findTotalPricePerCartItem } from "@/lib/helper/cartHelpers";
+import { findCartItemVariation, findTotalPricePerCartItem } from "@/lib/helper/cartHelpers";
+import { Button } from "../ui/button";
 
 const MemberCheckoutButton = dynamic(() => import("@/components/member-checkout-btn"), { ssr: false });
 const GuestCheckOutButton = dynamic(() => import("@/components/guest-checkout-btn"), { ssr: false });
 
 const CartCheckout = () => {
-  const { cartItems, subShippingFeeCartItems, subtotalCartItems, totalPrice, dispatch } = useCartContext();
-
+  const { cartItems, subShippingFeeCartItems, subtotalCartItems, totalPrice } = useCartContext();
+  const [showDetails, setShowDetails] = useState(false);
   const memoizedTotalShippingFeePerItem = useCallback((cartItem: CartItemWithProduct) => {
     return findTotalShippingFeePerItem(cartItem);
   }, []);
@@ -30,16 +31,35 @@ const CartCheckout = () => {
     return findTotalPricePerCartItem(cartItem);
   }, []);
 
+  const memoizedCartItemVariation = useCallback((cartItem: CartItemWithProduct) => {
+    const name = findCartItemVariation(cartItem);
+
+    return name;
+  }, []);
+
   return (
     <>
       {(!!cartItems || cartItems !== null) && (
         <div className="w-full rounded-md bg-gray-50 px-4 py-10 bg-inherit">
           <div className="flex flex-col space-y-4">
-            <h4 className="font-bold">Summary</h4>
-            <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h4 className="font-bold">Summary</h4>
+
+              <Button
+                type="button"
+                size="icon"
+                variant="none"
+                className="text-xs font-light text-muted-foreground w-fit flex items-center"
+                onClick={() => setShowDetails(!showDetails)}
+              >
+                Show details <ChevronDownIcon className={`${showDetails ? "rotate-180 duration-300" : ""}`} />
+              </Button>
+            </div>
+            <div className={`space-y-6 overflow-hidden transition-all duration-300 ${showDetails ? "max-h-screen" : "max-h-0"}`}>
               {cartItems?.map((cartItem) => (
                 <div key={cartItem.id} className="flex flex-col gap-2">
-                  <p className="text-xs">{capitalizeSentenceFirstChar(cartItem.product?.name ?? "")}</p>
+                  <p className="text-xs capitalize">{cartItem.product?.name ?? ""}</p>
+                  <span className="text-xs">{memoizedCartItemVariation(cartItem)} </span>
                   <div className="flex justify-between items-center">
                     <p className="text-xs text-muted-foreground flex gap-1 items-center">
                       <ShoppingBag />

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "Orders",
   description: "View and manage your orders. Track the status of your orders including pending, shipped, completed, and cancelled orders.",
 };
-
+export const dynamic = "force-dynamic";
 const OrderPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   return (
     <section className="py-8 px-4 flex-col space-y-4 w-full">

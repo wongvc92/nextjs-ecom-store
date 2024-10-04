@@ -1,9 +1,9 @@
 "use server";
 
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { cartItems } from "@/lib/db/schema/cartItems";
+import { CartItem, cartItems } from "@/lib/db/schema/cartItems";
 import { CartItemWithProduct, getCart, getExistingCartItem } from "@/lib/db/queries/carts";
 
 import {
@@ -15,7 +15,8 @@ import {
   updatecartItemsByVariationSchema,
   updateCartQuantitySchema,
 } from "@/lib/validation/cartSchemas";
-import { addNewCartItem, createCart, deleteCartItem, updateExistingCartQuantity, validateAndUpdateCart } from "@/lib/services/cartServices";
+import { addNewCartItem, deleteCartItem, updateExistingCartItemQuantity, validateAndUpdateCartItem } from "@/lib/services/cartItemServices";
+import { createCart } from "@/lib/services/cartServices";
 
 export const increaseCartQuantity = async (formData: FormData): Promise<{ error?: string; success?: string }> => {
   try {
@@ -36,7 +37,7 @@ export const increaseCartQuantity = async (formData: FormData): Promise<{ error?
       };
     }
 
-    const result = await validateAndUpdateCart(
+    const result = await validateAndUpdateCartItem(
       existingcartItem.productId,
       existingcartItem.quantity + 1,
       existingcartItem.variationId,
@@ -44,7 +45,7 @@ export const increaseCartQuantity = async (formData: FormData): Promise<{ error?
       existingcartItem.variationType,
       id
     );
-    revalidatePath("/");
+    revalidatePath("/", "layout");
     return result;
   } catch (error: any) {
     return {
@@ -73,19 +74,13 @@ export const decreaseCartQuantity = async (formData: FormData): Promise<{ error?
     }
 
     if (existingcartItem.quantity === 1) {
-      await deleteCartItem(id);
+      await db.transaction(async (tx) => {
+        await deleteCartItem(id, tx);
+      });
     } else {
-      const result = await validateAndUpdateCart(
-        existingcartItem.productId,
-        existingcartItem.quantity - 1,
-        existingcartItem.variationId,
-        existingcartItem.nestedVariationId,
-        existingcartItem.variationType,
-        id
-      );
-      return result;
+      await updateExistingCartItemQuantity(existingcartItem.id, existingcartItem.quantity - 1);
     }
-    revalidatePath("/");
+
     return {
       success: "cart updated",
     };
@@ -93,6 +88,8 @@ export const decreaseCartQuantity = async (formData: FormData): Promise<{ error?
     return {
       error: `Failed decrease quantity`,
     };
+  } finally {
+    revalidatePath("/", "layout");
   }
 };
 
@@ -116,9 +113,11 @@ export const updateCartQuantity = async (formData: FormData): Promise<{ error?: 
     }
 
     if (newQuantity < 1) {
-      await deleteCartItem(id);
+      await db.transaction(async (tx) => {
+        await deleteCartItem(id, tx);
+      });
     } else {
-      const result = await validateAndUpdateCart(
+      const result = await validateAndUpdateCartItem(
         existingcartItem.productId,
         newQuantity,
         existingcartItem.variationId,
@@ -128,7 +127,7 @@ export const updateCartQuantity = async (formData: FormData): Promise<{ error?: 
       );
       return result;
     }
-    revalidatePath("/");
+    revalidatePath("/", "layout");
     return {
       success: "cart updated",
     };
@@ -148,7 +147,7 @@ export const updatecartItemsByVariation = async (formData: FormData): Promise<{ 
         error: "Something went wrong",
       };
     }
-    const { id, newVariationId, productId, quantity } = validatedData.data;
+    const { id, newVariationId, quantity } = validatedData.data;
 
     const cart = (await getCart()) ?? (await createCart());
 
@@ -161,26 +160,36 @@ export const updatecartItemsByVariation = async (formData: FormData): Promise<{ 
     const [cartItemsWitNewVariationId] = await db
       .select()
       .from(cartItems)
-      .where(and(eq(cartItems.cartId, cart.id), eq(cartItems.variationId, newVariationId), eq(cartItems.productId, productId)));
+      .where(and(eq(cartItems.cartId, cart.id), eq(cartItems.variationId, newVariationId), eq(cartItems.productId, existingCartItem.productId)));
 
     let newcartItem;
     if (!cartItemsWitNewVariationId) {
-      [newcartItem] = await addNewCartItem(
-        cart.id,
-        quantity,
-        productId,
-        newVariationId,
-        existingCartItem.nestedVariationId,
-        existingCartItem.variationType
-      );
+      await db.transaction(async (tx) => {
+        newcartItem = await addNewCartItem(
+          cart.id,
+          quantity,
+          existingCartItem.productId,
+          newVariationId,
+          existingCartItem.nestedVariationId,
+          existingCartItem.variationType,
+          tx
+        );
 
-      await deleteCartItem(id);
+        await deleteCartItem(id, tx);
+      });
     } else {
-      [newcartItem] = await updateExistingCartQuantity(cartItemsWitNewVariationId.id, cartItemsWitNewVariationId.quantity + quantity);
-      await deleteCartItem(id);
+      newcartItem = await updateExistingCartItemQuantity(cartItemsWitNewVariationId.id, cartItemsWitNewVariationId.quantity + quantity);
+      await db.transaction(async (tx) => {
+        await deleteCartItem(id, tx);
+      });
     }
 
-    const result = await validateAndUpdateCart(
+    if (!newcartItem) {
+      return {
+        error: `Failed to update cart`,
+      };
+    }
+    const result = await validateAndUpdateCartItem(
       newcartItem.productId,
       newcartItem.quantity,
       newcartItem.variationId,
@@ -201,6 +210,7 @@ export const updatecartItemsByNestedVariation = async (formData: FormData): Prom
     const validatedData = updatecartItemsByNestedVariationSchema.safeParse(Object.fromEntries(formData));
 
     if (!validatedData.success) {
+      console.log(validatedData.error.flatten());
       return {
         error: "Something went wrong",
       };
@@ -227,23 +237,48 @@ export const updatecartItemsByNestedVariation = async (formData: FormData): Prom
         )
       );
 
-    let newcartItem;
+    let newcartItem: CartItem | null = null;
     if (!cartItemsWitNewNestedVariationId) {
-      [newcartItem] = await addNewCartItem(
-        cart.id,
-        existingCartItem.quantity,
-        existingCartItem.productId,
-        existingCartItem.variationId,
-        newNestedVariationId,
-        existingCartItem.variationType
-      );
-      await deleteCartItem(id);
+      newcartItem = await db.transaction(async (tx) => {
+        const newItem = await addNewCartItem(
+          cart.id,
+          existingCartItem.quantity,
+          existingCartItem.productId,
+          existingCartItem.variationId,
+          newNestedVariationId,
+          existingCartItem.variationType,
+          tx
+        );
+
+        await deleteCartItem(id, tx);
+
+        return newItem;
+      });
     } else {
-      [newcartItem] = await updateExistingCartQuantity(cartItemsWitNewNestedVariationId.id, cartItemsWitNewNestedVariationId.quantity + quantity);
-      await deleteCartItem(id);
+      newcartItem = await db.transaction(async (tx) => {
+        const newItem = await addNewCartItem(
+          cart.id,
+          cartItemsWitNewNestedVariationId.quantity + quantity,
+          cartItemsWitNewNestedVariationId.productId,
+          cartItemsWitNewNestedVariationId.variationId,
+          newNestedVariationId,
+          cartItemsWitNewNestedVariationId.variationType,
+          tx
+        );
+
+        await deleteCartItem(id, tx);
+        await deleteCartItem(cartItemsWitNewNestedVariationId.id, tx);
+        return newItem;
+      });
     }
 
-    const result = await validateAndUpdateCart(
+    if (!newcartItem) {
+      return {
+        error: `Failed to update cart`,
+      };
+    }
+
+    const result = await validateAndUpdateCartItem(
       newcartItem.productId,
       newcartItem.quantity,
       newcartItem.variationId,
@@ -277,7 +312,10 @@ export const removeCart = async (formData: FormData): Promise<{ error?: string; 
         error: "Cart item not found or already deleted",
       };
     }
-    await deleteCartItem(existingcartItem.id);
+    await db.transaction(async (tx) => {
+      await deleteCartItem(existingcartItem.id, tx);
+    });
+
     revalidatePath("/");
     return {
       success: "cart item deleted",
@@ -298,7 +336,9 @@ export const removeAllcartItems = async () => {
       };
     }
     for (const cartItem of cart.cartItems) {
-      await deleteCartItem(cartItem.id);
+      await db.transaction(async (tx) => {
+        await deleteCartItem(cartItem.id, tx);
+      });
     }
     revalidatePath("/");
     return {
@@ -315,6 +355,8 @@ export const addToCart = async (formData: FormData): Promise<{ error?: string; s
   try {
     const validatedData = addToCartSchema.safeParse(Object.fromEntries(formData));
 
+    console.log("Object.fromEntries(formData)", Object.fromEntries(formData));
+
     if (!validatedData.success) {
       const errorMessage = validatedData.error.errors.map((err) => `${err.path.join(".")} - ${err.message}`);
       console.error("errorMessage", errorMessage);
@@ -324,6 +366,7 @@ export const addToCart = async (formData: FormData): Promise<{ error?: string; s
     }
 
     const { productId, selectedNestedVariationId, selectedVariationId, variationType } = validatedData.data;
+
     const cart = (await getCart()) ?? (await createCart());
 
     let existingProductInCartItem: CartItemWithProduct | undefined;
@@ -343,20 +386,26 @@ export const addToCart = async (formData: FormData): Promise<{ error?: string; s
       existingProductInCartItem = cart.cartItems.find((item) => item.productId === productId && item.cartId === cart.id);
     }
 
-    let updatedProductInCart: CartItemWithProduct;
+    let result = { error: "", success: "" };
     if (existingProductInCartItem) {
-      [updatedProductInCart] = await updateExistingCartQuantity(existingProductInCartItem.id, existingProductInCartItem.quantity + 1);
+      const validationResult = await validateAndUpdateCartItem(
+        existingProductInCartItem.productId,
+        existingProductInCartItem.quantity + 1,
+        existingProductInCartItem.variationId,
+        existingProductInCartItem.nestedVariationId,
+        existingProductInCartItem.variationType,
+        existingProductInCartItem.id
+      );
+      result = {
+        error: validationResult.error || "",
+        success: validationResult.success || "",
+      };
     } else {
-      [updatedProductInCart] = await addNewCartItem(cart.id, 1, productId, selectedVariationId!, selectedNestedVariationId!, variationType);
+      await db.transaction(async (tx) => {
+        await addNewCartItem(cart.id, 1, productId, selectedVariationId!, selectedNestedVariationId!, variationType, tx);
+      });
     }
 
-    const result = await validateAndUpdateCart(
-      productId,
-      updatedProductInCart.quantity,
-      updatedProductInCart.variationId,
-      updatedProductInCart.nestedVariationId,
-      variationType
-    );
     revalidatePath("/");
     return result;
   } catch (error) {

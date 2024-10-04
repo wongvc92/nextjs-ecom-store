@@ -4,11 +4,9 @@ import React, { useRef, useTransition } from "react";
 import { toast } from "sonner";
 import { useCartItemContext } from "../../providers/cart.item.provider";
 import { useCartContext } from "../../providers/cart.provider";
-import { useSession } from "next-auth/react";
 import { updatecartItemsByVariation } from "@/actions/cart";
 
 const VariationSelect = () => {
-  const { data } = useSession();
   const { dispatch } = useCartContext();
   const { cartItem } = useCartItemContext();
   const [isPending, startTransition] = useTransition();
@@ -35,8 +33,6 @@ const VariationSelect = () => {
       });
       const formData = new FormData();
       formData.append("id", cartItem.id);
-
-      formData.append("previousProductId", cartItem.productId);
       formData.append("quantity", cartItem.quantity.toString());
       formData.append("newVariationId", selectedOption.value);
       const res = await updatecartItemsByVariation(formData);

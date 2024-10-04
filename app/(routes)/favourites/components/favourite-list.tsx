@@ -7,18 +7,17 @@ import NoFavourite from "./no-favourite";
 
 const FavouriteList = () => {
   const { favouriteProducts } = useFavouriteContext();
+
+  if (!favouriteProducts || favouriteProducts?.length === 0) {
+    return <NoFavourite />;
+  }
+
   return (
-    <>
-      {!favouriteProducts || favouriteProducts?.length === 0 ? (
-        <NoFavourite />
-      ) : (
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
-          {favouriteProducts.map((item) => (
-            <FavouriteCard key={item.id} favouriteProduct={item} />
-          ))}
-        </div>
-      )}
-    </>
+    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+      {favouriteProducts.map((item) => (
+        <FavouriteCard key={item.id} favouriteProduct={item} />
+      ))}
+    </div>
   );
 };
 

@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Browse and discover products tailored to your preferences using various filters, including category, price range, and more.",
 };
 
+export const dynamic = "force-dynamic";
+
 const ProductsPage = async ({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) => {
   const { perPage, productCounts } = await getProducts(searchParams as IProductsQuery);
 

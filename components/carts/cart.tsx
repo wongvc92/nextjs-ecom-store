@@ -13,7 +13,6 @@ const Cart = () => {
         <NoCart />
       ) : (
         <div className={"flex flex-col max-w-3xl mx-auto"}>
-          This is a test branch
           <CartList />
         </div>
       )}

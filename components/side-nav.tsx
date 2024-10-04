@@ -1,25 +1,18 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Heart, Menu, Receipt, ReceiptText, SettingsIcon } from "lucide-react";
-import Link from "next/link";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Heart, Menu, ReceiptText, SettingsIcon } from "lucide-react";
 import { ModeToggle } from "./ui/mode-toggle";
-
 import MobileSearch from "./mobile-search";
 import { useState } from "react";
-import LoginButton from "./login-button";
-
 import { useFavouriteContext } from "@/providers/favourite.provider";
-
 import { useSession } from "next-auth/react";
 import SignOutButton from "./auth/sign-out-button";
-import UserButton from "./auth/user-button";
-import { Separator } from "./ui/separator";
 import { useRouter } from "next/navigation";
 import { SignInButton } from "./auth/sign-in-button";
 
-const MobileNav = () => {
+const SideNav = ({ allOrdersCount }: { allOrdersCount: number }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { data } = useSession();
@@ -43,7 +36,7 @@ const MobileNav = () => {
               <Heart /> Favourites {!!favouriteProducts && favouriteProducts.length > 0 && `(${favouriteProducts?.length})`}
             </div>
             <div className="flex items-center gap-2 cursor-pointer hover:bg-muted p-1 rounded-md" onClick={() => router.push("/orders")}>
-              <ReceiptText /> Orders {!!favouriteProducts && favouriteProducts.length > 0 && `(${favouriteProducts?.length})`}
+              <ReceiptText /> Orders ({allOrdersCount})
             </div>
 
             <div className="flex items-center gap-2 cursor-pointer hover:bg-muted p-1 rounded-md" onClick={() => router.push("/settings")}>
@@ -62,4 +55,4 @@ const MobileNav = () => {
   );
 };
 
-export default MobileNav;
+export default SideNav;

@@ -32,7 +32,6 @@ const NestedVariationSelect = () => {
     });
     const formData = new FormData();
     formData.append("id", cartItem.id);
-    formData.append("previousProductId", cartItem.productId);
     formData.append("newNestedVariationId", selectedOption.value);
     formData.append("quantity", cartItem.quantity.toString());
     await updatecartItemsByNestedVariation(formData);

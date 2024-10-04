@@ -14,7 +14,7 @@ const OrderLogisticInfo = ({ status, orderId }: OrderLogisticInfoProps) => {
           <MapPin className="h-4 w-4" />
           Logistic Information
         </p>
-        <div className="pl-6">
+        <div className={`pl-6 ${status === "pending" ? "hidden" : "block"}`}>
           <div className="my-4 bg-muted p-4 dark:border rounded-md shadow-sm">
             <ul>
               <li className="relative flex gap-6 pb-5 items-baseline">

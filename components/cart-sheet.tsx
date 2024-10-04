@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { removeAllcartItems } from "@/actions/cart";
 import { toast } from "sonner";
 
-const MobileCart = () => {
+const CartSheet = () => {
   const { cartItemsQuantity, dispatch } = useCartContext();
 
   const params = useSearchParams();
@@ -50,4 +50,4 @@ const MobileCart = () => {
   );
 };
 
-export default MobileCart;
+export default CartSheet;

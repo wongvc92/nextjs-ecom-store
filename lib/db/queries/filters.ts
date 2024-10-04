@@ -1,24 +1,22 @@
-import { cache } from "react";
-
 const baseUrl = process.env.NEXT_PUBLIC_ADMIN_URL!;
 
-export const getColors = cache(async () => {
+export const getColors = async () => {
   const url = new URL(`${baseUrl}/api/filter/colors`);
   try {
     const response = await fetch(url, { cache: "force-cache" });
     if (!response.ok) {
-      return [];
+      return null;
     }
-    const { colorNames } = await response.json();
+    const data = await response.json();
 
-    return colorNames as string[];
+    return data.colorNames as string[];
   } catch (error) {
-    console.error("Failed fetch colors variations: ", error);
-    return [];
+    console.log("Failed fetch colors variations: ", error);
+    return null;
   }
-});
+};
 
-export const getSizes = cache(async () => {
+export const getSizes = async () => {
   const url = new URL(`${baseUrl}/api/filter/sizes`);
   try {
     const response = await fetch(url, { cache: "force-cache" });
@@ -26,16 +24,16 @@ export const getSizes = cache(async () => {
       return [];
     }
 
-    const { sizeNames } = await response.json();
+    const data = await response.json();
 
-    return sizeNames as string[];
+    return data.sizeNames as string[];
   } catch (error) {
     console.error("Failed fetch sizes variations: ", error);
     return [];
   }
-});
+};
 
-export const getCategories = cache(async () => {
+export const getCategories = async () => {
   const url = new URL(`${baseUrl}/api/filter/categories`);
   try {
     const response = await fetch(url.toString(), {
@@ -45,11 +43,11 @@ export const getCategories = cache(async () => {
       return [];
     }
 
-    const { categories } = await response.json();
+    const data = await response.json();
 
-    return categories as string[];
+    return data.categories as string[];
   } catch (error) {
     console.error("Failed fetch categories");
     return [];
   }
-});
+};

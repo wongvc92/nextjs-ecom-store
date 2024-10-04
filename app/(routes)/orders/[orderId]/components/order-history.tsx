@@ -1,14 +1,19 @@
+import { IOrder } from "@/lib/types";
 import { CheckCircle, DollarSign, ReceiptText, ShieldCheck } from "lucide-react";
 import React from "react";
 
-const OrderHistory = () => {
+const STATUS = ["pending", "toShip", "completed", "released"];
+
+const OrderHistory = ({ order }: { order: IOrder }) => {
+  const currentStatusIndex = STATUS.findIndex((item) => item === order.status);
+
   return (
     <div className="xl:w-1/3  bg-white dark:bg-inherit shadow-sm p-4 border rounded-md space-y-4 h-fit">
       <div className="flex justify-center">
         <p className="text-sm font-semibold">ORDER HISTORY</p>
       </div>
       <ul>
-        <li className="relative flex gap-6 pb-5 items-baseline">
+        <li className={`relative flex gap-6 pb-5 items-baseline ${currentStatusIndex >= 3 ? "flex" : "hidden"}`}>
           <div className="before:absolute before:left-[16px]  before:h-full before:w-[1px] before:bg-muted-foreground">
             <div className="bg-emerald-500 relative rounded-full p-1 text-center ">
               <ShieldCheck className="z-10 text-white" />
@@ -19,7 +24,7 @@ const OrderHistory = () => {
             <span className="text-[12px] text-muted-foreground">The payment has been successfully transferred.</span>
           </div>
         </li>
-        <li className="relative flex gap-6 pb-5 items-baseline">
+        <li className={`relative flex gap-6 pb-5 items-baseline ${currentStatusIndex >= 2 ? "flex" : "hidden"}`}>
           <div className="before:absolute before:left-[16px]  before:h-full before:w-[1px] before:bg-muted-foreground">
             <div className="bg-muted relative rounded-full p-1 text-center ">
               <CheckCircle className="z-10 text-muted-foreground" />
@@ -30,7 +35,7 @@ const OrderHistory = () => {
             <span className="text-[12px] text-muted-foreground">16/01/2023 03:51</span>
           </div>
         </li>
-        <li className="relative flex gap-6 pb-5 items-baseline">
+        <li className={`relative flex gap-6 pb-5 items-baseline ${currentStatusIndex >= 1 ? "flex" : "hidden"}`}>
           <div className="before:absolute before:left-[16px] before:h-full before:w-[1px] before:bg-muted-foreground">
             <div className="bg-muted relative rounded-full p-1 text-center ">
               <DollarSign className="z-10 text-muted-foreground" />
@@ -42,7 +47,7 @@ const OrderHistory = () => {
             <span className="text-[12px] text-muted-foreground">16/01/2023 03:51</span>
           </div>
         </li>
-        <li className="relative flex gap-6 pb-5 items-baseline">
+        <li className={`relative flex gap-6 pb-5 items-baseline ${currentStatusIndex >= 0 ? "flex" : "hidden"}`}>
           <div>
             <div className="bg-muted relative rounded-full p-1 text-center ">
               <ReceiptText className="z-10 text-muted-foreground" />

@@ -4,6 +4,7 @@ import ProductDetails from "./components/product-details";
 import ProductImageSlider from "./components/product-image-slider";
 import RelatedProducts from "../../../../components/related-products";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const generateStaticParams = async () => {
   const productsId = await getProductIds();
@@ -37,17 +38,19 @@ const ProductPageById = async ({ params }: { params: { productId: string } }) =>
 
   return (
     <ProductByIdProvider product={product}>
-      <section className="max-w-4xl min-h-screen mx-auto py-10">
-        <div className="flex flex-col sm:flex-row w-full md:px-4 gap-4">
-          <div className="w-full md:w-1/2">
-            <ProductImageSlider />
+      <section className="max-w-4xl min-h-screen mx-auto ">
+        <div className="md:py-10 space-y-6">
+          <div className="flex flex-col lg:flex-row w-full md:px-4 gap-4">
+            <div className="w-full lg:w-1/2">
+              <ProductImageSlider />
+            </div>
+            <div className="w-full lg:w-1/2 ">
+              <ProductDetails />
+            </div>
           </div>
-          <div className="w-full md:w-1/2 ">
-            <ProductDetails />
+          <div className="w-full pb-6">
+            <RelatedProducts />
           </div>
-        </div>
-        <div className="w-full">
-          <RelatedProducts />
         </div>
       </section>
     </ProductByIdProvider>

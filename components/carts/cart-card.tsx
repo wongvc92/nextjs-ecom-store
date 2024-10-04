@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { cache, useCallback } from "react";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import RemoveCartBtn from "./remove-cart-btn";
 import VariationSelect from "./variation-select";
 import NestedVariationSelect from "./nested-variation-select";
 import CartCounter from "./cart-counter";
-
 import { CartItemProvider } from "../../providers/cart.item.provider";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
 import { IProduct } from "@/lib/types";
@@ -21,8 +20,8 @@ interface CartCardProps {
 
 const CartCard: React.FC<CartCardProps> = ({ cartItem }) => {
   const memoizedTotalPricePerCartItem = useCallback(() => findTotalPricePerCartItem(cartItem), [cartItem]);
-  const memoizedCartImage = useCallback(() => findSelectedProductImage(cartItem.variationId as string, cartItem.product as IProduct), [cartItem]);
-
+  const memoizedCartImage = cache(() => findSelectedProductImage(cartItem.variationId as string, cartItem.product as IProduct));
+  console.log("cartItem.variationId", cartItem.variationId);
   const variationName =
     cartItem && cartItem.variationType === "NESTED_VARIATION" ? cartItem?.product?.variations.find((v) => v.id === cartItem.variationId)?.name : "";
 

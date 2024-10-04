@@ -47,7 +47,7 @@ const ImageSlider = ({
           </div>
         ))}
       </div>
-      <div className="absolute inset-0 flex justify-between items-center p-2">
+      <div className={`absolute inset-0 flex justify-between items-center p-2 ${images.length === 1 ? "hidden" : "block"}`}>
         <button
           onClick={handlePrevImage}
           className="rounded-full border-none p-1 bg-white opacity-70 active:bg-muted-foreground active:text-white dark:text-black"

@@ -5,9 +5,9 @@ export const findSelectedVariation = (variationId: string, product: IProduct): I
   if (!variationId || !product) return null;
   let foundVariation: IVariation | null = null;
   if (product.variationType === "NESTED_VARIATION" || product.variationType === "VARIATION") {
-    foundVariation = product.variations.find((item) => item.name === variationId) as IVariation;
+    foundVariation = product.variations.find((item) => item.id === variationId) as IVariation;
   }
-  if (!foundVariation) return null;
+
   return foundVariation;
 };
 
@@ -84,14 +84,12 @@ export const findSelectedProductStock = (variationId: string, nestedVariationId:
 };
 
 export const findSelectedProductImage = (variationId: string, product: IProduct): string => {
-  if (!product) return "";
-  let productImage = "";
   if (product.variationType === "NESTED_VARIATION" || product.variationType === "VARIATION") {
-    productImage = product?.variations.find((v) => v.id === variationId)?.image ?? "";
+    return product?.variations.find((v) => v.id === variationId)?.image ?? product?.productImages[0].url;
   } else if (product.variationType === "NONE") {
-    productImage = product?.productImages[0].url ?? "";
+    return product?.productImages[0].url;
   }
-  return productImage;
+  return product?.productImages[0].url;
 };
 
 export const shortenedProductName = (name: string): string => {

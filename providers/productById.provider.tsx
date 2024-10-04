@@ -35,6 +35,7 @@ export const ProductByIdProvider: React.FC<ProductProviderProps> = ({ product, c
   const searchParams = useSearchParams();
   const variationId = searchParams.get("v1")?.trim() || "";
   const nestedVariationId = searchParams.get("v2")?.trim() || "";
+  console.log("variationId", variationId);
 
   const memoizedSelectedVariation = useMemo(() => {
     return findSelectedVariation(variationId, product);

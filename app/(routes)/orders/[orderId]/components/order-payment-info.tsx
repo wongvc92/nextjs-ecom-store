@@ -14,6 +14,8 @@ const OrderPaymentInfo = ({ order }: { order: IOrder }) => {
     });
   }, [order.orderItems]);
 
+  console.log("order", order);
+
   return (
     <div className="border rounded-md p-4 space-y-4 bg-white dark:bg-black shadow-sm ">
       <p className="flex items-center gap-2  font-semibold text-sm">
