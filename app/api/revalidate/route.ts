@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     // Revalidate the specified path
     await Promise.all(
       paths.map(async (path) => {
-        revalidatePath(path);
+        revalidatePath(path, "page");
       })
     );
     return NextResponse.json({ revalidated: true });
