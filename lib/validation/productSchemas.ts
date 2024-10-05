@@ -28,7 +28,8 @@ export const productsQuerySchema = z.object({
         return !isNaN(num) && num >= 0;
       },
       { message: "minPrice must be a non-negative number" }
-    ),
+    )
+    .default("0"),
   maxPrice: z
     .string()
     .optional()
@@ -39,7 +40,8 @@ export const productsQuerySchema = z.object({
         return !isNaN(num) && num >= 0;
       },
       { message: "maxPrice must be a non-negative number" }
-    ),
+    )
+    .default("10000000"),
   sort: z.string().max(20).optional().default(""),
 });
 

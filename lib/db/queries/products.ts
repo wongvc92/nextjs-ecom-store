@@ -44,9 +44,7 @@ export const getProducts = async (searchParams: IProductsQuery): Promise<{ produ
   addSearchParams(url, searchParams);
 
   try {
-    const response = await fetch(url.toString(), {
-      cache: "force-cache",
-    });
+    const response = await fetch(url.toString());
 
     if (!response.ok) {
       console.error(`Fetch error: ${response.statusText}`);
