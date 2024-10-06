@@ -4,6 +4,8 @@ import ProductDetails from "./components/product-details";
 import ProductImageSlider from "./components/product-image-slider";
 import RelatedProducts from "../../../../components/related-products";
 import { Metadata } from "next";
+import { Suspense } from "react";
+import ImageSliderLoading from "@/components/loading/image-slider-loading";
 
 export const generateStaticParams = async () => {
   const productsId = await getProductIds();
@@ -47,9 +49,12 @@ const ProductPageById = async ({ params }: { params: { productId: string } }) =>
               <ProductDetails />
             </div>
           </div>
-          <div className="w-full pb-6">
-            <RelatedProducts />
-          </div>
+
+          <Suspense fallback={<ImageSliderLoading />}>
+            <div className="w-full pb-6 pt-4">
+              <RelatedProducts />
+            </div>
+          </Suspense>
         </div>
       </section>
     </ProductByIdProvider>

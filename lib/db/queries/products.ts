@@ -69,11 +69,12 @@ export const getProducts = async (searchParams: IProductsQuery): Promise<{ produ
 };
 
 export const getFeaturedProduct = async () => {
-  const url = `${BASE_URL}/api/products/featured`;
+  const url = new URL(`${BASE_URL}/api/products/featured`);
 
   try {
     const response = await fetch(url.toString(), {
       cache: "force-cache",
+      next: { tags: ["featuredProducts"] },
     });
     if (!response.ok) {
       throw new Error(`Fetch error: ${response.statusText}`);
@@ -97,7 +98,7 @@ export const getProductById = async (productId: string): Promise<IProduct | null
   const url = new URL(`${BASE_URL}/api/products/${encodeURIComponent(productId)}`);
 
   try {
-    const response = await fetch(url.toString(), { cache: "force-cache" });
+    const response = await fetch(url.toString(), { cache: "force-cache", next: { tags: [`product-${productId}`] } });
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[Fetch Error]: Failed to fetch product (${response.status} - ${response.statusText}): ${errorText}`);
