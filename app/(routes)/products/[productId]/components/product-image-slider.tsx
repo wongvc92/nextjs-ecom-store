@@ -87,7 +87,7 @@ const ProductImageSlider = () => {
               <Image key={item.id} src={displayImage as string} alt={`Product image ${i + 1}`} layout="fill" className="object-cover" />
             ))}
 
-            <div className="absolute inset-0 flex justify-between items-center p-1">
+            <div className={`absolute inset-0 flex justify-between items-center p-1 ${product.productImages.length > 1 ? "flex" : "hidden"}`}>
               <button
                 onClick={handlePrevImage}
                 className="rounded-full border-none p-1 bg-white opacity-70 active:bg-muted-foreground active:text-white dark:text-black"
