@@ -6,6 +6,7 @@ export const getBanners = async (): Promise<IbannerImage[] | null> => {
   const url = new URL(`${baseUrl}/api/banners`);
   try {
     const res = await fetch(url.toString(), {
+      cache: "force-cache",
       next: { tags: ["banners"] },
     });
 
