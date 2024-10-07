@@ -73,7 +73,6 @@ export const getFeaturedProduct = async () => {
 
   try {
     const response = await fetch(url.toString(), {
-      cache: "force-cache",
       next: { tags: ["featuredProducts"] },
     });
     if (!response.ok) {
