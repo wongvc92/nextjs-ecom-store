@@ -31,7 +31,9 @@ const ProductsPage = async ({ searchParams }: { searchParams: { [key: string]: s
       </div>
       <div className="flex flex-col md:flex-row gap-8 w-full overflow-hidden px-4">
         <div className="w-[200px]">
-          <FilterSidebar />
+          <Suspense fallback={"loading...."}>
+            <FilterSidebar />
+          </Suspense>
         </div>
         <div className="flex flex-col gap-4 w-full">
           <Suspense fallback={<ProductListSkeleton />}>

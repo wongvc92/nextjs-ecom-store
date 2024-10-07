@@ -3,7 +3,7 @@ import { db } from "..";
 import { IProduct } from "@/lib/types";
 import { Favourite, favourites } from "../schema/favourites";
 import { getProductById } from "./products";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { removeFavourite } from "@/lib/services/favouriteServices";
 
 export interface FavouriteItemWithProduct extends Favourite {

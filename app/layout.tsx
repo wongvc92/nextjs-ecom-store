@@ -14,7 +14,6 @@ import { getCart } from "@/lib/db/queries/carts";
 import { SessionProvider } from "next-auth/react";
 import { ModalProvider } from "@/providers/modal.provider";
 import { auth } from "@/auth";
-import { unstable_cache } from "next/cache";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,16 +24,6 @@ export const metadata: Metadata = {
   keywords: "ecommerce, online store, buy products, best prices, fast shipping",
 };
 
-const getCachedFavouritesByUserId = unstable_cache(
-  async (userId: string) => {
-    return await getFavouritesByUserId(userId);
-  },
-  ["favourites"],
-  {
-    tags: ["favourites"],
-  }
-);
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -44,7 +33,7 @@ export default async function RootLayout({
   const categories = await getCategories();
   const sizes = await getSizes();
   const colors = await getColors();
-  const favouriteProducts = (await getCachedFavouritesByUserId(session?.user.id as string)) ?? [];
+  const favouriteProducts = (await getFavouritesByUserId(session?.user.id as string)) ?? [];
   const cart = await getCart();
 
   return (
