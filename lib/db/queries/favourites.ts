@@ -32,7 +32,6 @@ export const getFavouritesByUserId = async (userId: string): Promise<FavouriteIt
     const itemWithOutNullProducts = itemsWithProducts.filter((item) => item.product !== null);
     for (const item of itemWithNullProducts) {
       await removeFavourite(item.id);
-      revalidateTag("favourites");
     }
     return itemWithOutNullProducts;
   } catch (error) {

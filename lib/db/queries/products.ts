@@ -72,9 +72,7 @@ export const getFeaturedProduct = async () => {
   const url = new URL(`${BASE_URL}/api/products/featured`);
 
   try {
-    const response = await fetch(url.toString(), {
-      next: { tags: ["featuredProducts"] },
-    });
+    const response = await fetch(url.toString());
     if (!response.ok) {
       throw new Error(`Fetch error: ${response.statusText}`);
     }

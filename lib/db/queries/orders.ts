@@ -1,7 +1,7 @@
 import { addSearchParams } from "@/lib/utils";
 import { IOrdersQuery, orderQuerySchema } from "@/lib/validation/orderSchemas";
 import { validate as isUuid } from "uuid";
-import { IOrder } from "@/lib/types";
+import { IOrder, IOrderStatusHistory } from "@/lib/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_ADMIN_URL!;
 
@@ -25,7 +25,6 @@ export async function getOrders(searchParams: IOrdersQuery, userId: string) {
       headers: {
         "X-User-ID": userId,
       },
-      cache: "force-cache",
     });
 
     if (!response.ok) {
@@ -55,9 +54,7 @@ export const getOrderById = async (orderId: string): Promise<IOrder | null> => {
   const url = new URL(`${BASE_URL}/api/orders/${encodeURIComponent(orderId)}`);
 
   try {
-    const response = await fetch(url.toString(), {
-      cache: "force-cache",
-    });
+    const response = await fetch(url.toString());
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -89,7 +86,6 @@ export const getOrderStatsCount = async (userId: string) => {
       headers: {
         "X-User-ID": userId,
       },
-      cache: "force-cache",
     });
 
     if (!response.ok) {
@@ -115,4 +111,23 @@ export const getOrderStatsCount = async (userId: string) => {
     console.log("Failed fetch stats count for orders", error);
     return statsCount;
   }
+};
+
+export const getOrderStatusHistoriesByOrderId = async (orderId: string): Promise<IOrderStatusHistory[] | null> => {
+  const url = new URL(`${BASE_URL}/api/orders/orderStatusHistories`);
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      orderId: orderId,
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = await response.json();
+
+  return data.orderStatusHistory as IOrderStatusHistory[];
 };

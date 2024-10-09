@@ -5,7 +5,6 @@ import OrderLogisticInfo from "./components/order-logistic-info";
 import OrderPaymentInfo from "./components/order-payment-info";
 import { currencyFormatter } from "@/lib/utils";
 import OrderHistory from "./components/order-history";
-import OrderPageLoading from "./components/order-page-loading";
 
 interface OrderPageByIdProps {
   params: { orderId: string };
@@ -53,9 +52,9 @@ const OrderPageById = async ({ params }: OrderPageByIdProps) => {
                   Delivery Address
                 </p>
                 <div className="pl-6">
-                  {order && order.shipping ? (
+                  {order && order.shippings.length ? (
                     <span className="text-muted-foreground text-xs">
-                      {`${order?.shipping?.address}, ${order?.shipping?.address2}, ${order?.shipping?.postalCode}, ${order?.shipping?.city}, ${order?.shipping?.state}`}
+                      {`${order?.shippings[0]?.address}, ${order?.shippings[0]?.address2}, ${order?.shippings[0]?.postalCode}, ${order?.shippings[0]?.city}, ${order?.shippings[0]?.state}`}
                     </span>
                   ) : (
                     ""
@@ -65,7 +64,7 @@ const OrderPageById = async ({ params }: OrderPageByIdProps) => {
             </div>
 
             {/* Logistic Information */}
-            <OrderLogisticInfo status={order.status} orderId={order.id} />
+            <OrderLogisticInfo order={order} />
           </div>
 
           {/* Payment Information */}
@@ -83,7 +82,7 @@ const OrderPageById = async ({ params }: OrderPageByIdProps) => {
           </div>
         </div>
         {/* order history */}
-        <OrderHistory order={order} />
+        <OrderHistory orderId={order.id} />
       </div>
     </section>
   );

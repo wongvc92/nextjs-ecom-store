@@ -177,10 +177,18 @@ export interface IOrder {
   createdAt: string;
   updatedAt: string;
   orderItems: IOrderItem[];
-  shipping: IShipping;
+  shippings: IShipping[];
 }
 
 export interface IbannerImage {
   id: string;
   url: string;
+}
+
+export interface IOrderStatusHistory {
+  id: string;
+  orderId: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

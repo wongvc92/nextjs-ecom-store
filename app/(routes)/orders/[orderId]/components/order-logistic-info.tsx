@@ -1,12 +1,14 @@
+import { IOrder } from "@/lib/types";
 import { Circle, MapPin } from "lucide-react";
 import React from "react";
 
 interface OrderLogisticInfoProps {
-  status: string;
-  orderId: string;
+  order: IOrder;
 }
 
-const OrderLogisticInfo = ({ status, orderId }: OrderLogisticInfoProps) => {
+const OrderLogisticInfo = ({ order }: OrderLogisticInfoProps) => {
+
+  
   return (
     <div className="flex">
       <div className="flex flex-col">
@@ -14,7 +16,15 @@ const OrderLogisticInfo = ({ status, orderId }: OrderLogisticInfoProps) => {
           <MapPin className="h-4 w-4" />
           Logistic Information
         </p>
-        <div className={`pl-6 ${status === "pending" ? "hidden" : "block"}`}>
+        <div className={`pl-6 ${order.status === "pending" ? "hidden" : "block"}`}>
+          <div className="pt-2">
+            <p className="flex items-center gap-2 text-sm">
+              Tracking no: <span className="text-muted-foreground font-light ">{order.trackingNumber}</span>
+            </p>
+            <p className="text-sm">
+              Courier: <span className="text-muted-foreground font-light">J&T express</span>
+            </p>
+          </div>
           <div className="my-4 bg-muted p-4 dark:border rounded-md shadow-sm">
             <ul>
               <li className="relative flex gap-6 pb-5 items-baseline">

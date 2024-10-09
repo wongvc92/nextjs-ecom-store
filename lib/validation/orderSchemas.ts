@@ -39,3 +39,8 @@ export const orderQuerySchema = z.object({
 });
 
 export type IOrdersQuery = z.infer<typeof orderQuerySchema>;
+
+export const updateOrderStatusSchema = z.object({
+  id: z.string().uuid(),
+  status: statusEnum,
+});

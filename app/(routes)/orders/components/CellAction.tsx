@@ -1,11 +1,12 @@
 "use client";
 
-import { Copy, MoreHorizontal, ScrollText } from "lucide-react";
+import { Copy, MoreHorizontal, PackageIcon, ScrollText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { IOrder } from "@/lib/types";
+import { updateOrderStatusByOrderId } from "@/actions/order";
 
 interface CellActionProps {
   data: IOrder;
@@ -17,6 +18,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
     toast.success("Order ID copied to clipboard.");
+  };
+
+  const onOrderReceived = async (id: string) => {
+    const formData = new FormData();
+    formData.append("status", "completed");
+    formData.append("id", id);
+    const res = await updateOrderStatusByOrderId(formData);
+    if (res.error) {
+      toast.error(res.error);
+    } else if (res.success) {
+      toast.success(res.success);
+    }
   };
 
   return (
@@ -31,10 +44,16 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onCopy(data.id)}>
-            <Copy className="mr-2 h-4 w-4" /> Copy Id
+            <Copy className="mr-2 h-4 w-4" />
+            Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push(`/orders/${data.id}`)}>
-            <ScrollText className="mr-2 h-4 w-4" /> Check Details
+            <ScrollText className="mr-2 h-4 w-4" />
+            Details
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onOrderReceived(data.id)}>
+            <PackageIcon className="mr-2 h-4 w-4" />
+            Order received
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
