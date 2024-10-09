@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function POST(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     // Revalidate the specified path
     await Promise.all(
       tags.map(async (tag) => {
-        revalidatePath(tag);
+        revalidateTag(tag);
       })
     );
     return NextResponse.json({ revalidated: true });
