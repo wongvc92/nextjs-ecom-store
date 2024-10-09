@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
         revalidateTag(tag);
       })
     );
+    console.log("revalidateTagstore POST");
     return NextResponse.json({ revalidated: true });
   } catch (err) {
     return NextResponse.json({ message: "Error revalidating" }, { status: 500 });
