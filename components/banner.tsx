@@ -1,7 +1,7 @@
 import ImageSlider from "./image-slider";
 import { getBanners } from "@/lib/db/queries/banners";
 
-export const revalidate = false;
+export const fetchCache = "force-no-store";
 const Banner = async () => {
   const bannerImages = await getBanners();
   if (!bannerImages) {

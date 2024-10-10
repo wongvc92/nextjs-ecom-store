@@ -7,7 +7,7 @@ import TagsLink from "@/components/tags-link";
 import { Skeleton } from "@/components/ui/skeleton";
 import ImageSliderLoading from "@/components/loading/image-slider-loading";
 
-export const revalidate = false;
+export const fetchCache = "force-no-store";
 
 export default async function HomePage() {
   return (
