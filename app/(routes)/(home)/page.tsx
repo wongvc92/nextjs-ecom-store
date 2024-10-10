@@ -7,7 +7,7 @@ import TagsLink from "@/components/tags-link";
 import { Skeleton } from "@/components/ui/skeleton";
 import ImageSliderLoading from "@/components/loading/image-slider-loading";
 
-export const revalidate = false;
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   return (
