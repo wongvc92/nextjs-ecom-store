@@ -24,6 +24,8 @@ export const metadata: Metadata = {
   keywords: "ecommerce, online store, buy products, best prices, fast shipping",
 };
 
+export const fetchCache = "force-no-store";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
