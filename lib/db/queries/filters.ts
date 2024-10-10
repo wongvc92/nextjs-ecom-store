@@ -3,7 +3,9 @@ const baseUrl = process.env.NEXT_PUBLIC_ADMIN_URL!;
 export const getColors = async () => {
   const url = new URL(`${baseUrl}/api/filter/colors`);
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: "no-store",
+    });
     if (!response.ok) {
       return [];
     }
@@ -19,7 +21,9 @@ export const getColors = async () => {
 export const getSizes = async () => {
   const url = new URL(`${baseUrl}/api/filter/sizes`);
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: "no-store",
+    });
     if (!response.ok) {
       return [];
     }
@@ -36,7 +40,9 @@ export const getSizes = async () => {
 export const getCategories = async () => {
   const url = new URL(`${baseUrl}/api/filter/categories`);
   try {
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), {
+      cache: "no-store",
+    });
     if (!response.ok) {
       return [];
     }
