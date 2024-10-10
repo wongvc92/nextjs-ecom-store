@@ -73,7 +73,7 @@ export const getFeaturedProduct = async () => {
 
   try {
     const response = await fetch(url.toString(), {
-      next: { tags: ["featuredProducts"] },
+      cache: "no-store",
     });
     if (!response.ok) {
       throw new Error(`Fetch error: ${response.statusText}`);
