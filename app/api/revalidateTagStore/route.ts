@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
   if (!tags) {
     return NextResponse.json({ message: "Please provide tags" }, { status: 401 });
   }
+
+  console.log(tags);
   try {
     // Revalidate the specified path
     await Promise.all(
