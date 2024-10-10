@@ -97,7 +97,7 @@ export const getProductById = async (productId: string): Promise<IProduct | null
   const url = new URL(`${BASE_URL}/api/products/${encodeURIComponent(productId)}`);
 
   try {
-    const response = await fetch(url.toString(), { next: { tags: [`product-${productId}`] } });
+    const response = await fetch(url.toString());
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[Fetch Error]: Failed to fetch product (${response.status} - ${response.statusText}): ${errorText}`);
