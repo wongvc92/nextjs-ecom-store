@@ -7,7 +7,6 @@ import TagsLink from "@/components/tags-link";
 import { Skeleton } from "@/components/ui/skeleton";
 import ImageSliderLoading from "@/components/loading/image-slider-loading";
 
-export const revalidate = 60;
 export default async function HomePage() {
   return (
     <main className="w-full min-h-screen md:container py-10">
