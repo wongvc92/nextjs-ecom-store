@@ -9,7 +9,7 @@ import ImageSliderLoading from "@/components/loading/image-slider-loading";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home() {
+export default async function HomePage() {
   return (
     <main className="w-full min-h-screen md:container py-10">
       <TagsLink />
