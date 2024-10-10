@@ -1,7 +1,7 @@
 import ImageSlider from "./image-slider";
 import { getBanners } from "@/lib/db/queries/banners";
 
-export const dynamic = "force-dynamic";
+export const revalidate = false;
 const Banner = async () => {
   const bannerImages = await getBanners();
   if (!bannerImages) {
