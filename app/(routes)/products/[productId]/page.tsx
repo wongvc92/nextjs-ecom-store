@@ -7,6 +7,8 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import ImageSliderLoading from "@/components/loading/image-slider-loading";
 
+export const dynamic = "auto";
+
 export const generateStaticParams = async () => {
   const productsId = await getProductIds();
 
