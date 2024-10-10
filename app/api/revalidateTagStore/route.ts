@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 
 export async function POST(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const secret = searchParams.get("secret");
-  const tags = searchParams.getAll("tag");
+  const data = await req.json();
+
+  const { secret, tags } = data;
 
   // Check for the secret to confirm this is a valid request
-  if (secret !== process.env.NEXT_PUBLIC_REVALIDATE_SECRET) {
+  if (secret !== process.env.REVALIDATE_SECRET) {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });
   }
   if (!tags) {
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   try {
     // Revalidate the specified path
     await Promise.all(
-      tags.map(async (tag) => {
+      tags.map(async (tag: string) => {
         revalidateTag(tag);
       })
     );
