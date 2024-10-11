@@ -3,9 +3,21 @@ import { z } from "zod";
 export const productsQuerySchema = z.object({
   query: z.string().max(100).optional().default(""),
   category: z.string().max(50).optional().default(""),
-  color: z.array(z.string().max(20)).optional().default([]),
-  size: z.array(z.string().max(20)).optional().default([]),
-  tags: z.array(z.string().max(20)).optional().default([]),
+  color: z
+    .union([z.string().max(20), z.array(z.string().max(20))])
+    .optional()
+    .transform((val) => (typeof val === "string" ? [val] : val))
+    .default([]),
+  size: z
+    .union([z.string().max(20), z.array(z.string().max(20))])
+    .optional()
+    .transform((val) => (typeof val === "string" ? [val] : val))
+    .default([]),
+  tags: z
+    .union([z.string().max(20), z.array(z.string().max(20))])
+    .optional()
+    .transform((val) => (typeof val === "string" ? [val] : val))
+    .default([]),
   page: z
     .string()
     .optional()
