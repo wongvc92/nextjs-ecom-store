@@ -40,9 +40,7 @@ export const getSizes = async () => {
 export const getCategories = async () => {
   const url = new URL(`${baseUrl}/api/filter/categories`);
   try {
-    const response = await fetch(url.toString(), {
-      cache: "no-store",
-    });
+    const response = await fetch(url.toString());
     if (!response.ok) {
       return [];
     }
