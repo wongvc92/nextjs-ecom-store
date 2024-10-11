@@ -6,17 +6,14 @@ export const productsQuerySchema = z.object({
   color: z
     .union([z.string().max(20), z.array(z.string().max(20))])
     .optional()
-    .transform((val) => (typeof val === "string" ? [val] : val))
     .default([]),
   size: z
     .union([z.string().max(20), z.array(z.string().max(20))])
     .optional()
-    .transform((val) => (typeof val === "string" ? [val] : val))
     .default([]),
   tags: z
     .union([z.string().max(20), z.array(z.string().max(20))])
     .optional()
-    .transform((val) => (typeof val === "string" ? [val] : val))
     .default([]),
   page: z
     .string()
