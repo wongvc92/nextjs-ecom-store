@@ -5,9 +5,7 @@ const baseUrl = process.env.NEXT_PUBLIC_ADMIN_URL!;
 export const getBanners = async (): Promise<IbannerImage[] | null> => {
   const url = new URL(`${baseUrl}/api/banners`);
   try {
-    const res = await fetch(url.toString(), {
-      cache: "no-store",
-    });
+    const res = await fetch(url.toString());
 
     if (!res.ok) {
       return null;
