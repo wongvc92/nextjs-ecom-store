@@ -4,15 +4,48 @@ export const productsQuerySchema = z.object({
   query: z.string().max(100).optional().default(""),
   category: z.string().max(50).optional().default(""),
   color: z
-    .union([z.string().max(20), z.array(z.string().max(20))])
+    .union([
+      z
+        .string()
+        .max(20)
+        .transform((val) => val?.toLocaleLowerCase()),
+      z.array(
+        z
+          .string()
+          .max(20)
+          .transform((val) => val?.toLocaleLowerCase())
+      ),
+    ])
     .optional()
     .default([]),
   size: z
-    .union([z.string().max(20), z.array(z.string().max(20))])
+    .union([
+      z
+        .string()
+        .max(20)
+        .transform((val) => val?.toLocaleLowerCase()),
+      z.array(
+        z
+          .string()
+          .max(20)
+          .transform((val) => val?.toLocaleLowerCase())
+      ),
+    ])
     .optional()
     .default([]),
   tags: z
-    .union([z.string().max(20), z.array(z.string().max(20))])
+    .union([
+      z
+        .string()
+        .max(20)
+        .transform((val) => val?.toLocaleLowerCase()),
+      z.array(
+        z
+          .string()
+          .max(20)
+          .transform((val) => val?.toLocaleLowerCase())
+      ),
+    ])
     .optional()
     .default([]),
   page: z
