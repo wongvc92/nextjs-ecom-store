@@ -9,6 +9,7 @@ export const POST = async (req: NextRequest) => {
   const body: CourierRequest = await req.json();
   const parsed = courierRequestSchema.safeParse(body);
   if (!parsed.success) {
+    console.log(parsed.error.flatten().fieldErrors);
     return NextResponse.json({ error: "Something went wrong" }, { status: 400 });
   }
   const { toPostcode, totalWeightInKg, courierChoice } = parsed.data;

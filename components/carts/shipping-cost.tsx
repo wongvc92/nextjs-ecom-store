@@ -43,10 +43,9 @@ const ShippingCost = () => {
         },
         method: "POST",
         body: JSON.stringify({
-          courier: courierChoice,
-          fromPostcode: 51000,
-          toPostcode: parseInt(toPostcode),
-          weight: totalWeightInKg,
+          courierChoice,
+          toPostcode,
+          totalWeightInKg,
         }),
       });
 
