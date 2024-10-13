@@ -9,6 +9,7 @@ import { Input } from "../ui/input";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
 
+const baseUrl = process.env.NEXT_PUBLIC_STORE_URL!;
 const ShippingCost = () => {
   const { totalWeightInKg, setSubtotalShippings, MAX_WEIGHT_IN_KG, setFoundCorier, setToPostcode, courierChoice, toPostcode, setCourierChoice } =
     useCartContext();
@@ -37,7 +38,8 @@ const ShippingCost = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/courier/services", {
+      const url = new URL(`${baseUrl}/api/courier/services`);
+      const res = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
         },

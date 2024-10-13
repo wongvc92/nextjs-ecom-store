@@ -25,14 +25,14 @@ const MemberCheckoutButton = () => {
     <Button
       onClick={() => startTransition(onCheckOut)}
       type="button"
-      className="flex items-center gap-2 w-full"
+      className="flex items-center justify-center gap-2 w-full"
       disabled={isPending || foundCourier === false}
     >
       {isPending ? (
-        <>
+        <p className="flex items-center justify-center gap-2 w-full">
           <Spinner className="w-4 h-4" />
           Member Checkout
-        </>
+        </p>
       ) : (
         "Member Checkout"
       )}
