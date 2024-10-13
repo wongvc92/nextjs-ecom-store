@@ -1,19 +1,21 @@
 import { CourierService } from "@/lib/types";
+import { CourierRequest, courierRequestSchema } from "@/lib/validation/courierValidation";
 import { NextRequest, NextResponse } from "next/server";
 
 const baseUrl = process.env.NEXT_PUBLIC_TRACKING_MY_URL!;
 const apiKey = process.env.TRACKING_MY_API_KEY!;
 
 export const POST = async (req: NextRequest) => {
-  const body = await req.json();
-  const { fromPostcode, toPostcode, weight, courier } = body;
-  if (!fromPostcode || !toPostcode || !weight) {
-    return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
+  const body: CourierRequest = await req.json();
+  const parsed = courierRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Something went wrong" }, { status: 400 });
   }
+  const { toPostcode, totalWeightInKg, courierChoice } = parsed.data;
   try {
     console.log("apiKey", apiKey);
     const url = new URL(
-      `${baseUrl}/api/v1/services?from_postcode=${fromPostcode}&to_postcode=${toPostcode}&weight=${weight}&from_country=MY&to_country=MY&type=normal&service_type=`
+      `${baseUrl}/api/v1/services?from_postcode=${51000}&to_postcode=${toPostcode}&weight=${totalWeightInKg}&from_country=MY&to_country=MY&type=normal&service_type=`
     );
     const res = await fetch(url.toString(), {
       method: "GET",
@@ -30,9 +32,8 @@ export const POST = async (req: NextRequest) => {
 
     const data = await res.json();
 
-    console.log("data services", data.services);
-    const filteredServices = data.services.filter((item: CourierService) => item.courier_title === courier);
-    console.log("filteredServices", filteredServices);
+    const filteredServices = data.services.filter((item: CourierService) => item.courier_title === courierChoice);
+
     return NextResponse.json(filteredServices as CourierService[], { status: 200 });
   } catch (error) {
     console.log("Failed fetch courier list: ", error);
