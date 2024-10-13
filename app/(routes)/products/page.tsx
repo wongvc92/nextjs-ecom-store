@@ -9,6 +9,7 @@ import FilterSidebar from "@/components/filter/filter-sidebar";
 import ProductList from "./components/product-list";
 import GroupPagination from "@/components/group-pagination";
 import { Metadata } from "next";
+import { getCourierServices } from "@/app/couriers";
 
 export const metadata: Metadata = {
   title: "Products",

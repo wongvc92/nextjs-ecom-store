@@ -6,11 +6,12 @@ import Spinner from "./spinner";
 import { useSession } from "next-auth/react";
 import { guestCheckout } from "@/actions/checkout";
 import { toast } from "sonner";
+import { useCartContext } from "@/providers/cart.provider";
 
 const GuestCheckOutButton = () => {
   const { data } = useSession();
   const [isPending, startTransition] = useTransition();
-
+  const { foundCourier } = useCartContext();
   const onCheckOut = async () => {
     const res = await guestCheckout();
     if (res?.success) {
@@ -24,7 +25,7 @@ const GuestCheckOutButton = () => {
     <Button
       type="submit"
       className="flex items-center gap-2 w-full"
-      disabled={isPending}
+      disabled={isPending || foundCourier === false}
       onClick={() => startTransition(onCheckOut)}
       style={{ display: data?.user.id ? "none" : "block" }}
     >

@@ -1,9 +1,8 @@
 "use client";
 
-import { createContext, useContext, useMemo, useOptimistic } from "react";
+import { createContext, SetStateAction, useContext, useMemo, useOptimistic, useState } from "react";
 import { Cart, CartItemWithProduct } from "@/lib/db/queries/carts";
-import { findSubShippingFeeCartItems } from "@/lib/helper/shippingHelpers";
-import { findCartItemsQuantity, findSubtotalCartItems } from "@/lib/helper/cartHelpers";
+import { findCartItemsQuantity, findSubtotalCartItems, findTotalWeightInKg } from "@/lib/helper/cartHelpers";
 
 interface CartItemPayload extends CartItemWithProduct {
   newVariationId?: string | null;
@@ -24,10 +23,14 @@ interface IAction {
 }
 
 interface ICartContext {
+  setFoundCorier: React.Dispatch<SetStateAction<boolean>>;
+  foundCourier: boolean;
+  MAX_WEIGHT_IN_KG: number;
+  setSubtotalShippings: (value: number) => void;
+  totalWeightInKg: number;
   cart?: Cart | null;
   cartItems?: CartItemWithProduct[];
   dispatch: (action: IAction) => void;
-  subShippingFeeCartItems: string;
   subtotalCartItems: string;
   totalPrice: string;
   cartItemsQuantity: string;
@@ -119,24 +122,43 @@ const reducer = (state: CartItemWithProduct[], action: IAction): CartItemWithPro
 
 export const CartProvider = ({ cart, children }: CartProviderProps) => {
   const cartItems = cart ? cart.cartItems : [];
+  const MAX_WEIGHT_IN_KG = 60;
   const [optimisticCartItems, dispatch] = useOptimistic(cartItems, reducer);
-  const memoizedSubShippingFeeCartItems = useMemo(() => findSubShippingFeeCartItems(optimisticCartItems), [optimisticCartItems]);
+  const [subTotalShippings, setSubtotalShippings] = useState(0);
+  const [foundCourier, setFoundCorier] = useState(false);
   const memoizedSubtotalCartItems = useMemo(() => findSubtotalCartItems(optimisticCartItems), [optimisticCartItems]);
   const memoizedCartItemsQuantity = useMemo(() => findCartItemsQuantity(optimisticCartItems), [optimisticCartItems]);
+  const totalWeightInKg = useMemo(() => findTotalWeightInKg(optimisticCartItems), [optimisticCartItems]);
+  console.log("totalWeightInKg", totalWeightInKg);
 
-  const totalPrice = memoizedSubtotalCartItems + memoizedSubShippingFeeCartItems;
+  const totalPrice = memoizedSubtotalCartItems + subTotalShippings;
 
+  console.log("foundCourier", foundCourier);
   const contextValue = useMemo(
     () => ({
+      setFoundCorier,
+      foundCourier,
+      MAX_WEIGHT_IN_KG,
+      setSubtotalShippings,
+      totalWeightInKg,
       totalPrice: totalPrice.toString(),
       cartItemsQuantity: memoizedCartItemsQuantity.toString(),
       subtotalCartItems: memoizedSubtotalCartItems.toString(),
-      subShippingFeeCartItems: memoizedSubShippingFeeCartItems.toString(),
       cart,
       cartItems: optimisticCartItems,
       dispatch,
     }),
-    [cart, dispatch, optimisticCartItems, totalPrice, memoizedCartItemsQuantity, memoizedSubShippingFeeCartItems, memoizedSubtotalCartItems]
+    [
+      setSubtotalShippings,
+      cart,
+      dispatch,
+      optimisticCartItems,
+      totalPrice,
+      memoizedCartItemsQuantity,
+      memoizedSubtotalCartItems,
+      totalWeightInKg,
+      foundCourier,
+    ]
   );
 
   return <CartContext.Provider value={contextValue}>{children}</CartContext.Provider>;

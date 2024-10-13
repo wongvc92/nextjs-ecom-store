@@ -4,12 +4,12 @@ import React, { useTransition } from "react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import Spinner from "./spinner";
-import { useSession } from "next-auth/react";
 import { memberCheckout } from "@/actions/checkout";
+import { useCartContext } from "@/providers/cart.provider";
 
 const MemberCheckoutButton = () => {
-  const { data } = useSession();
   const [isPending, startTransition] = useTransition();
+  const { foundCourier } = useCartContext();
 
   const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
     startTransition(async () => {
@@ -26,7 +26,7 @@ const MemberCheckoutButton = () => {
   };
   return (
     <form onSubmit={onCheckOut}>
-      <Button type="submit" className="flex items-center gap-2 w-full" disabled={isPending}>
+      <Button type="submit" className="flex items-center gap-2 w-full" disabled={isPending || foundCourier === false}>
         {isPending ? (
           <>
             <Spinner className="w-4 h-4" />

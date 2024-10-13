@@ -1,27 +1,24 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
-import { ChevronDownIcon, ShoppingBag, Truck } from "lucide-react";
+import { ChevronDownIcon, ShoppingBag } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useCartContext } from "../../providers/cart.provider";
-import { capitalizeSentenceFirstChar, currencyFormatter } from "@/lib/utils";
+import { currencyFormatter } from "@/lib/utils";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
 import dynamic from "next/dynamic";
 import { IProduct } from "@/lib/types";
-import { findTotalShippingFeePerItem } from "@/lib/helper/shippingHelpers";
 import { findSelectedProductPrice } from "@/lib/helper/productHelpers";
 import { findCartItemVariation, findTotalPricePerCartItem } from "@/lib/helper/cartHelpers";
 import { Button } from "../ui/button";
+import ShippingCost from "./shipping-cost";
 
 const MemberCheckoutButton = dynamic(() => import("@/components/member-checkout-btn"), { ssr: false });
 const GuestCheckOutButton = dynamic(() => import("@/components/guest-checkout-btn"), { ssr: false });
 
 const CartCheckout = () => {
-  const { cartItems, subShippingFeeCartItems, subtotalCartItems, totalPrice } = useCartContext();
+  const { cartItems, subtotalCartItems, totalPrice, foundCourier } = useCartContext();
   const [showDetails, setShowDetails] = useState(false);
-  const memoizedTotalShippingFeePerItem = useCallback((cartItem: CartItemWithProduct) => {
-    return findTotalShippingFeePerItem(cartItem);
-  }, []);
 
   const memoizedSelectedPrice = useCallback((cartItem: CartItemWithProduct) => {
     return findSelectedProductPrice(cartItem.variationId as string, cartItem.nestedVariationId as string, cartItem.product as IProduct);
@@ -33,10 +30,10 @@ const CartCheckout = () => {
 
   const memoizedCartItemVariation = useCallback((cartItem: CartItemWithProduct) => {
     const name = findCartItemVariation(cartItem);
-
     return name;
   }, []);
 
+  console.log("cartItems", cartItems);
   return (
     <>
       {(!!cartItems || cartItems !== null) && (
@@ -69,15 +66,6 @@ const CartCheckout = () => {
                     </p>
                     <p className="text-xs text-muted-foreground">{currencyFormatter(memoizedTotalPricePerItem(cartItem))}</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Truck />
-                      <span>
-                        {currencyFormatter(parseInt(cartItem.product?.shippingFeeInCents.toString() as string))} x {cartItem.quantity}
-                      </span>
-                    </p>
-                    <p className="text-xs text-muted-foreground">{currencyFormatter(memoizedTotalShippingFeePerItem(cartItem))}</p>
-                  </div>
                 </div>
               ))}
             </div>
@@ -87,12 +75,12 @@ const CartCheckout = () => {
             </div>
             <div className="flex justify-between">
               <p className="text-normal text-muted-foreground">Delivery</p>
-              <p className="font-bold">{currencyFormatter(parseInt(subShippingFeeCartItems))}</p>
+              <ShippingCost />
             </div>
             <Separator />
             <div className="flex justify-between">
               <p className="text-normal font-medium">Total</p>
-              <p className="font-extrabold">{currencyFormatter(parseInt(totalPrice))}</p>
+              <p className="font-extrabold">{!foundCourier ? null : currencyFormatter(parseInt(totalPrice))}</p>
             </div>
             <Separator />
 

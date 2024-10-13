@@ -11,6 +11,14 @@ export const findSubtotalCartItems = (cartItems: CartItemWithProduct[]): number 
   }, 0);
 };
 
+export const findTotalWeightInKg = (cartItems: CartItemWithProduct[]): number => {
+  const totalWeightinGram = cartItems?.reduce((acc, item) => {
+    const totalPerItem = (item.product?.weightInGram || 0) * item.quantity;
+    return acc + totalPerItem;
+  }, 0);
+  return parseFloat((totalWeightinGram / 1000).toFixed(1));
+};
+
 export const findCartItemsQuantity = (cartItems: CartItemWithProduct[]): number => {
   return cartItems.reduce((acc, item) => {
     return acc + item.quantity;
