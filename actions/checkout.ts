@@ -26,7 +26,7 @@ export const guestCheckout = async () => {
   }
 };
 
-export const memberCheckout = async () => {
+export const memberCheckout = async (toPostcode: string, courierChoice: string, totalWeightInKg: number) => {
   const session = await auth();
   if (!session) {
     return redirect("/auth/sign-in");
@@ -44,7 +44,7 @@ export const memberCheckout = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ cartItems: cart.cartItems, customer }),
+    body: JSON.stringify({ cartItems: cart.cartItems, customer, toPostcode, courierChoice }),
   });
   if (!response.ok) {
     throw new Error("Failed checkout");

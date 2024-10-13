@@ -2,7 +2,7 @@ import { CourierService } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 const baseUrl = process.env.NEXT_PUBLIC_TRACKING_MY_URL!;
-const apiKey = process.env.NEXT_PUBLIC_TRACKING_MY_API_KEY!;
+const apiKey = process.env.TRACKING_MY_API_KEY!;
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();

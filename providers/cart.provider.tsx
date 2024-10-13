@@ -23,6 +23,10 @@ interface IAction {
 }
 
 interface ICartContext {
+  toPostcode: string;
+  setToPostcode: React.Dispatch<SetStateAction<string>>;
+  courierChoice: string;
+  setCourierChoice: React.Dispatch<SetStateAction<string>>;
   setFoundCorier: React.Dispatch<SetStateAction<boolean>>;
   foundCourier: boolean;
   MAX_WEIGHT_IN_KG: number;
@@ -126,6 +130,8 @@ export const CartProvider = ({ cart, children }: CartProviderProps) => {
   const [optimisticCartItems, dispatch] = useOptimistic(cartItems, reducer);
   const [subTotalShippings, setSubtotalShippings] = useState(0);
   const [foundCourier, setFoundCorier] = useState(false);
+  const [toPostcode, setToPostcode] = useState("");
+  const [courierChoice, setCourierChoice] = useState("");
   const memoizedSubtotalCartItems = useMemo(() => findSubtotalCartItems(optimisticCartItems), [optimisticCartItems]);
   const memoizedCartItemsQuantity = useMemo(() => findCartItemsQuantity(optimisticCartItems), [optimisticCartItems]);
   const totalWeightInKg = useMemo(() => findTotalWeightInKg(optimisticCartItems), [optimisticCartItems]);
@@ -136,8 +142,12 @@ export const CartProvider = ({ cart, children }: CartProviderProps) => {
   console.log("foundCourier", foundCourier);
   const contextValue = useMemo(
     () => ({
-      setFoundCorier,
+      toPostcode,
+      setToPostcode,
       foundCourier,
+      setFoundCorier,
+      courierChoice,
+      setCourierChoice,
       MAX_WEIGHT_IN_KG,
       setSubtotalShippings,
       totalWeightInKg,
@@ -149,6 +159,8 @@ export const CartProvider = ({ cart, children }: CartProviderProps) => {
       dispatch,
     }),
     [
+      courierChoice,
+      toPostcode,
       setSubtotalShippings,
       cart,
       dispatch,

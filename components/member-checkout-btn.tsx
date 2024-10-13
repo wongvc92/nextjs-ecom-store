@@ -9,13 +9,13 @@ import { useCartContext } from "@/providers/cart.provider";
 
 const MemberCheckoutButton = () => {
   const [isPending, startTransition] = useTransition();
-  const { foundCourier } = useCartContext();
+  const { foundCourier, toPostcode, courierChoice, totalWeightInKg } = useCartContext();
 
   const onCheckOut = async (e: React.FormEvent<HTMLFormElement>) => {
     startTransition(async () => {
       e.preventDefault();
       try {
-        const res = await memberCheckout();
+        const res = await memberCheckout(toPostcode, courierChoice, totalWeightInKg);
         if (res && res.success) {
           window.location.href = res.success.url;
         }

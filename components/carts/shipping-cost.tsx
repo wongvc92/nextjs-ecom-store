@@ -10,11 +10,11 @@ import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
 
 const ShippingCost = () => {
-  const { totalWeightInKg, setSubtotalShippings, MAX_WEIGHT_IN_KG, setFoundCorier } = useCartContext();
+  const { totalWeightInKg, setSubtotalShippings, MAX_WEIGHT_IN_KG, setFoundCorier, setToPostcode, courierChoice, toPostcode, setCourierChoice } =
+    useCartContext();
   const [couriers, setCouriers] = useState<CourierService[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [toPostcode, setToPostcode] = useState("");
-  const [courierChoice, setCourierChoice] = useState("");
+
   const [error, setError] = useState("");
   const handleSearch = useDebouncedCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setToPostcode(e.target.value);
