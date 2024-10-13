@@ -11,9 +11,9 @@ import { useCartContext } from "@/providers/cart.provider";
 const GuestCheckOutButton = () => {
   const { data } = useSession();
   const [isPending, startTransition] = useTransition();
-  const { foundCourier } = useCartContext();
+  const { foundCourier, toPostcode, courierChoice, totalWeightInKg } = useCartContext();
   const onCheckOut = async () => {
-    const res = await guestCheckout();
+    const res = await guestCheckout({ toPostcode, courierChoice, totalWeightInKg });
     if (res?.success) {
       window.location.href = res.success.url;
     } else if (res?.error) {
@@ -23,7 +23,7 @@ const GuestCheckOutButton = () => {
 
   return (
     <Button
-      type="submit"
+      type="button"
       className="flex items-center gap-2 w-full"
       disabled={isPending || foundCourier === false}
       onClick={() => startTransition(onCheckOut)}

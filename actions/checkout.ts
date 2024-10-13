@@ -4,7 +4,12 @@ import { auth } from "@/auth";
 import { getCart } from "@/lib/db/queries/carts";
 import { redirect } from "next/navigation";
 
-export const guestCheckout = async () => {
+interface ICheckoutProps {
+  toPostcode: string;
+  courierChoice: string;
+  totalWeightInKg: number;
+}
+export const guestCheckout = async ({ toPostcode, courierChoice, totalWeightInKg }: ICheckoutProps) => {
   const cart = await getCart();
 
   if (!cart?.cartItems) return;
@@ -13,7 +18,7 @@ export const guestCheckout = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ cartItems: cart.cartItems }),
+    body: JSON.stringify({ cartItems: cart.cartItems, toPostcode, courierChoice, totalWeightInKg }),
   });
   if (!response.ok) {
     return {
@@ -26,7 +31,7 @@ export const guestCheckout = async () => {
   }
 };
 
-export const memberCheckout = async (toPostcode: string, courierChoice: string, totalWeightInKg: number) => {
+export const memberCheckout = async ({ toPostcode, courierChoice, totalWeightInKg }: ICheckoutProps) => {
   const session = await auth();
   if (!session) {
     return redirect("/auth/sign-in");
@@ -44,7 +49,7 @@ export const memberCheckout = async (toPostcode: string, courierChoice: string, 
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ cartItems: cart.cartItems, customer, toPostcode, courierChoice }),
+    body: JSON.stringify({ cartItems: cart.cartItems, customer, toPostcode, courierChoice, totalWeightInKg }),
   });
   if (!response.ok) {
     throw new Error("Failed checkout");
