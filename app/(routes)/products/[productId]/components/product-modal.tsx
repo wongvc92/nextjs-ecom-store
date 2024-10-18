@@ -40,6 +40,7 @@ const ProductModal: React.FC<ProductModal> = ({ title, product, description, isO
           <DialogDescription className="text-left pt-5 break-all">{description}</DialogDescription>
         </DialogHeader>
         <div>{children}</div>
+        <div>{`${product.height}cm x ${product.length}cm x ${product.width}cm`}</div>
       </DialogContent>
     </Dialog>
   );

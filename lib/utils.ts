@@ -70,3 +70,20 @@ export const convertCentsToTwoDecimalString = (priceInCents: number): string => 
   if (!priceInCents) return "0";
   return (priceInCents / 100).toFixed(2);
 };
+
+export const calculateTotalDimensions = (products: IProduct[]) => {
+  return products.reduce(
+    (totals, product) => {
+      return {
+        totalWidth: totals.totalWidth + product.width,
+        totalLength: totals.totalLength + product.length,
+        totalHeight: totals.totalHeight + product.height,
+      };
+    },
+    {
+      totalWidth: 0,
+      totalLength: 0,
+      totalHeight: 0,
+    }
+  );
+};

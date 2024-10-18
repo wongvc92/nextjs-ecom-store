@@ -1,22 +1,45 @@
 "use client";
 
 import { useCartContext } from "@/providers/cart.provider";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CourierService } from "@/lib/types";
-import { convertCentsToTwoDecimal } from "@/lib/utils";
+import { CourierService, ICartItem, IProduct } from "@/lib/types";
+import { calculateTotalDimensions, convertCentsToTwoDecimal } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
+import { CartItemWithProduct } from "@/lib/db/queries/carts";
 
 const baseUrl = process.env.NEXT_PUBLIC_STORE_URL!;
 const ShippingCost = () => {
-  const { totalWeightInKg, setSubtotalShippings, MAX_WEIGHT_IN_KG, setFoundCorier, setToPostcode, courierChoice, toPostcode, setCourierChoice } =
-    useCartContext();
+  const {
+    totalWeightInKg,
+    setSubtotalShippings,
+    MAX_WEIGHT_IN_KG,
+    setFoundCorier,
+    setToPostcode,
+    courierChoice,
+    toPostcode,
+    setCourierChoice,
+    cartItems,
+  } = useCartContext();
   const [couriers, setCouriers] = useState<CourierService[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const [error, setError] = useState("");
+
+  const { totalHeight, totalLength, totalWidth } = useMemo(() => {
+    let products: IProduct[] = [];
+
+    for (const cartItem of cartItems as CartItemWithProduct[]) {
+      const product = cartItem.product;
+      if (product) {
+        products.push(product);
+      }
+    }
+    return calculateTotalDimensions(products);
+  }, [cartItems]);
+
   const handleSearch = useDebouncedCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setToPostcode(e.target.value);
   }, 1000);
@@ -48,6 +71,9 @@ const ShippingCost = () => {
           courierChoice,
           toPostcode,
           totalWeightInKg,
+          totalHeight,
+          totalLength,
+          totalWidth,
         }),
       });
 
@@ -73,7 +99,7 @@ const ShippingCost = () => {
     } finally {
       setLoading(false);
     }
-  }, [courierChoice, totalWeightInKg, toPostcode, setSubtotalShippings, MAX_WEIGHT_IN_KG, setFoundCorier]);
+  }, [courierChoice, totalWeightInKg, toPostcode, setSubtotalShippings, MAX_WEIGHT_IN_KG, setFoundCorier, totalHeight, totalLength, totalWidth]);
 
   useEffect(() => {
     if (courierChoice && totalWeightInKg && toPostcode) {
@@ -97,10 +123,10 @@ const ShippingCost = () => {
       {error && <p className="text-muted-foreground text-xs font-light text-red-500">{error}</p>}
 
       {/* Input for postcode */}
-      <Input onChange={handleSearch} placeholder="Enter postcode" className="w-full text-muted-foreground text-sm" />
+      <Input onChange={handleSearch} placeholder="Enter postcode" className="w-full text-muted-foreground text-sm" defaultValue={toPostcode} />
 
       {/* Select for courier choice */}
-      <Select onValueChange={(value) => setCourierChoice(value)}>
+      <Select onValueChange={(value) => setCourierChoice(value)} defaultValue={courierChoice}>
         <SelectTrigger className="w-full text-muted-foreground text-sm">
           <SelectValue placeholder="Select courier" />
         </SelectTrigger>

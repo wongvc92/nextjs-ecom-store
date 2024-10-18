@@ -14,6 +14,8 @@ import { getCart } from "@/lib/db/queries/carts";
 import { SessionProvider } from "next-auth/react";
 import { ModalProvider } from "@/providers/modal.provider";
 import { auth } from "@/auth";
+import { SenderProvider } from "@/providers/sender.provider";
+import { getSender } from "@/lib/db/queries/sender";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,25 +37,27 @@ export default async function RootLayout({
   const colors = await getColors();
   const favouriteProducts = (await getFavouritesByUserId(session?.user.id as string)) ?? [];
   const cart = await getCart();
-
+  const sender = await getSender();
   return (
     <html lang="en">
       <body className={inter.className}>
         <ModalProvider>
-          <ThemeProvider attribute="class" defaultTheme="system">
-            <SessionProvider>
-              <Toaster richColors position="top-center" />
-              <FavouriteProvider value={favouriteProducts}>
-                <CartProvider cart={cart}>
-                  <ProductFilterProvider value={{ categories, sizes, colors }}>
-                    <Navbar />
-                    <div className="min-h-screen">{children}</div>
-                    <Footer />
-                  </ProductFilterProvider>
-                </CartProvider>
-              </FavouriteProvider>
-            </SessionProvider>
-          </ThemeProvider>
+          <SenderProvider sender={sender}>
+            <ThemeProvider attribute="class" defaultTheme="system">
+              <SessionProvider>
+                <Toaster richColors position="top-center" />
+                <FavouriteProvider value={favouriteProducts}>
+                  <CartProvider cart={cart}>
+                    <ProductFilterProvider value={{ categories, sizes, colors }}>
+                      <Navbar />
+                      <div className="min-h-screen">{children}</div>
+                      <Footer />
+                    </ProductFilterProvider>
+                  </CartProvider>
+                </FavouriteProvider>
+              </SessionProvider>
+            </ThemeProvider>
+          </SenderProvider>
         </ModalProvider>
       </body>
     </html>

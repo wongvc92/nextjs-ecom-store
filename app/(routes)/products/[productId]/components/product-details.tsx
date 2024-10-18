@@ -14,7 +14,6 @@ const ProductDetails = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { product, selectedProductPrice, selectedProductStock } = useProductByIdContext();
 
-  console.log("selectedProductPrice", selectedProductPrice);
   return (
     <>
       {product && (

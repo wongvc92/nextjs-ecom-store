@@ -84,6 +84,9 @@ export interface IProduct {
   minPurchase: number;
   maxPurchase: number;
   weightInGram: number;
+  width: number;
+  length: number;
+  height: number;
   shippingFeeInCents: number;
   variations: IVariation[];
 }
@@ -237,4 +240,17 @@ interface Group {
   min_kg: number;
   max_kg: number;
   is_follow?: boolean;
+}
+
+export interface Sender {
+  name: string;
+  dialing_country_code: "MY" | "SG" | "TH";
+  phone: number;
+  email?: string; // Optional email
+  address_1: string;
+  address_2?: string; // Optional address line 2
+  postcode: number;
+  province: string;
+  city: string;
+  country: "MY" | "SG" | "TH";
 }
