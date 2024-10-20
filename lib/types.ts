@@ -169,13 +169,18 @@ export interface IOrderItem {
 
 export interface IOrder {
   id: string;
-  paymentIntentId: string;
   customerId: string;
-  productName: string;
+  subtotalInCents: number;
+
+  totalShippingInCents: number;
+  courierServiceId: string;
   amountInCents: string;
+  totalWeightInGram: number;
+  productName: string;
   image: string;
-  trackingNumber: string;
   status: string;
+  trackingNumber: string;
+  shippingOrderNumber: string;
   courierName: string;
   createdAt: string;
   updatedAt: string;

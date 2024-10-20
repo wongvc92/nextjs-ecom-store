@@ -5,9 +5,10 @@ import { currencyFormatter } from "@/lib/utils";
 import { findOrderItemSubTotal } from "@/lib/helper/orderHelpers";
 import { ImageIcon, LucideBadgeDollarSign } from "lucide-react";
 import Image from "next/image";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 const OrderPaymentInfo = ({ order }: { order: IOrder }) => {
+  const [imgError, setImgError] = useState(false);
   const memoizedSubTotals: number[] = useMemo(() => {
     return order.orderItems?.map((item) => {
       return findOrderItemSubTotal(Number(item.quantity), Number(item.priceInCents));
@@ -35,12 +36,16 @@ const OrderPaymentInfo = ({ order }: { order: IOrder }) => {
             </tr>
           </thead>
           <tbody>
-            {order.orderItems?.map((item, i) => (
+            {order.orderItems.map((item, i) => (
               <tr key={item.id} className="border-b ">
                 <td className="p-4 font-normal text-xs text-center">{i + 1}</td>
                 <td className="p-4  flex justify-center items-center">
                   <div className="rounded-md h-[100px] w-[100px] relative overflow-hidden">
-                    {item.image ? <Image src={item.image} alt={`Order item image-${i}`} fill className="object-cover" /> : <ImageIcon />}
+                    {item.image && !imgError ? (
+                      <Image src={item.image} alt={`Order item image-${i}`} fill className="object-cover" onError={() => setImgError(true)} />
+                    ) : (
+                      <ImageIcon className="w-full h-full object-contain text-gray-300" />
+                    )}
                   </div>
                 </td>
                 <td className="p-4  font-normal text-xs text-center">{item.productName}</td>
@@ -51,6 +56,40 @@ const OrderPaymentInfo = ({ order }: { order: IOrder }) => {
                 <td className="p-4 font-normal text-xs text-center">{currencyFormatter(memoizedSubTotals[i])}</td>
               </tr>
             ))}
+            <tr className="hidden md:table-row">
+              <td colSpan={8} className="p-4">
+                <div className="flex justify-end">
+                  <div className="space-y-2 text-xs flex flex-col">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Order total</span>
+                      <span>{currencyFormatter(order.subtotalInCents)}</span>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Shipping total</span>
+                      <span>{currencyFormatter(order.totalShippingInCents)}</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            {/* For small screens */}
+            <tr className="table-row md:hidden">
+              <td colSpan={3} className="p-4">
+                <div className="flex justify-end">
+                  <div className="space-y-2 text-xs flex flex-col">
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Order total</span>
+                      <span>{currencyFormatter(order.subtotalInCents)}</span>
+                    </div>
+                    <div className="flex justify-between gap-2">
+                      <span className="text-muted-foreground">Shipping total</span>
+                      <span>{currencyFormatter(order.totalShippingInCents)}</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
