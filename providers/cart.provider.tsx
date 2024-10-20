@@ -23,6 +23,8 @@ interface IAction {
 }
 
 interface ICartContext {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<SetStateAction<boolean>>;
   toPostcode: string;
   setToPostcode: React.Dispatch<SetStateAction<string>>;
   courierChoice: string;
@@ -132,16 +134,17 @@ export const CartProvider = ({ cart, children }: CartProviderProps) => {
   const [foundCourier, setFoundCorier] = useState(false);
   const [toPostcode, setToPostcode] = useState("");
   const [courierChoice, setCourierChoice] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const memoizedSubtotalCartItems = useMemo(() => findSubtotalCartItems(optimisticCartItems), [optimisticCartItems]);
   const memoizedCartItemsQuantity = useMemo(() => findCartItemsQuantity(optimisticCartItems), [optimisticCartItems]);
   const totalWeightInKg = useMemo(() => findTotalWeightInKg(optimisticCartItems), [optimisticCartItems]);
-  console.log("totalWeightInKg", totalWeightInKg);
 
   const totalPrice = memoizedSubtotalCartItems + subTotalShippings;
 
-  console.log("foundCourier", foundCourier);
   const contextValue = useMemo(
     () => ({
+      isOpen,
+      setIsOpen,
       toPostcode,
       setToPostcode,
       foundCourier,
@@ -159,6 +162,7 @@ export const CartProvider = ({ cart, children }: CartProviderProps) => {
       dispatch,
     }),
     [
+      isOpen,
       courierChoice,
       toPostcode,
       setSubtotalShippings,

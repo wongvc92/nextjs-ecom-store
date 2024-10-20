@@ -12,7 +12,7 @@ import { removeAllcartItems } from "@/actions/cart";
 import { toast } from "sonner";
 
 const CartSheet = () => {
-  const { cartItemsQuantity, dispatch } = useCartContext();
+  const { cartItemsQuantity, dispatch, isOpen, setIsOpen } = useCartContext();
 
   const params = useSearchParams();
 
@@ -34,9 +34,9 @@ const CartSheet = () => {
   }, [deleteCart]);
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={() => setIsOpen(!isOpen)}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-1">
+        <Button variant="outline" className="flex items-center gap-1" onClick={() => setIsOpen(true)}>
           <ShoppingBag />
           <span className="text-xs text-muted-foreground font-light"> {cartItemsQuantity}</span>
         </Button>

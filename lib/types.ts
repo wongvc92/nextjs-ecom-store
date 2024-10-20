@@ -171,7 +171,6 @@ export interface IOrder {
   id: string;
   customerId: string;
   subtotalInCents: number;
-
   totalShippingInCents: number;
   courierServiceId: string;
   amountInCents: string;

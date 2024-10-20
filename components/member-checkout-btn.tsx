@@ -6,19 +6,23 @@ import { toast } from "sonner";
 import Spinner from "./spinner";
 import { memberCheckout } from "@/actions/checkout";
 import { useCartContext } from "@/providers/cart.provider";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const MemberCheckoutButton = () => {
   const [isPending, startTransition] = useTransition();
-  const { foundCourier, toPostcode, courierChoice, totalWeightInKg } = useCartContext();
-
+  const { foundCourier, toPostcode, courierChoice, totalWeightInKg, setIsOpen } = useCartContext();
+  const { data } = useSession();
+  const router = useRouter();
   const onCheckOut = async () => {
-    try {
-      const res = await memberCheckout({ toPostcode, courierChoice, totalWeightInKg });
-      if (res && res.success) {
-        window.location.href = res.success.url;
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
+    if (!data?.user.id) {
+      setIsOpen(false);
+      router.push("/auth/sign-in");
+      return;
+    }
+    const res = await memberCheckout({ toPostcode, courierChoice, totalWeightInKg });
+    if (res && res.success) {
+      window.location.href = res.success.url;
     }
   };
   return (
