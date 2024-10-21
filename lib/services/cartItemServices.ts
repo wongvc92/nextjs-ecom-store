@@ -4,8 +4,8 @@ import { db } from "../db";
 import { handleStockErrors, validateProductStock } from "./productServices";
 import { PgTransaction } from "drizzle-orm/pg-core";
 
-export const deleteCartItem = async (cartItemId: string, tx: PgTransaction<any, any, any>) => {
-  return await tx.delete(cartItemsTable).where(eq(cartItemsTable.id, cartItemId));
+export const deleteCartItem = async (cartId: string, tx: PgTransaction<any, any, any>) => {
+  return await tx.delete(cartItemsTable).where(eq(cartItemsTable.cartId, cartId));
 };
 
 export const addNewCartItem = async (

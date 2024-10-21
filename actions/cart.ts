@@ -355,8 +355,6 @@ export const addToCart = async (formData: FormData): Promise<{ error?: string; s
   try {
     const validatedData = addToCartSchema.safeParse(Object.fromEntries(formData));
 
-    console.log("Object.fromEntries(formData)", Object.fromEntries(formData));
-
     if (!validatedData.success) {
       const errorMessage = validatedData.error.errors.map((err) => `${err.path.join(".")} - ${err.message}`);
       console.error("errorMessage", errorMessage);

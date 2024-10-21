@@ -20,7 +20,7 @@ const Navbar = async () => {
       </Link>
       <SearchModal />
       <div className="flex items-center gap-4">
-        <UserButton />
+        <UserButton session={session} />
         <MobileCart />
       </div>
     </MaxWrapper>

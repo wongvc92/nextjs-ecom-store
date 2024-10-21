@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
   DropdownMenu,
@@ -14,29 +12,33 @@ import Image from "next/image";
 import { ModeToggle } from "../ui/mode-toggle";
 import SignOutButton from "./sign-out-button";
 import { SignInButton } from "./sign-in-button";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+import Link from "next/link";
 
-const UserButton = () => {
-  const { data } = useSession();
-  const router = useRouter();
+const UserButton = ({ session }: { session: Session | null }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="hidden md:block">
-        {data?.user.image ? <Image src={data.user.image} alt="user Image" height={40} width={40} className="rounded-full" /> : <CircleUserRound />}
+        {session?.user.image ? (
+          <Image src={session.user.image} alt="user Image" height={40} width={40} className="rounded-full" />
+        ) : (
+          <CircleUserRound />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/settings")}>
-          <SettingsIcon />
-          Settings
+        <DropdownMenuItem>
+          <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
+            <SettingsIcon />
+            Settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <ModeToggle />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>{data?.user ? <SignOutButton /> : <SignInButton />}</DropdownMenuItem>
+        <DropdownMenuItem>{session?.user.id ? <SignOutButton /> : <SignInButton />}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

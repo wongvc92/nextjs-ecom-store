@@ -56,9 +56,8 @@ export async function mergeAnonymouseCartIntoUserCart(userId: string) {
 
   await db.transaction(async (tx) => {
     if (userCart) {
-      const mergedcartItem = mergecartItem(guestCart.cartItems as CartItem[], userCart.cartItems as CartItem[]);
-
       await deleteCartItem(userCart.id, tx);
+      const mergedcartItem = mergecartItem(guestCart.cartItems as CartItem[], userCart.cartItems as CartItem[]);
 
       for (const mergedCartItem of mergedcartItem) {
         await addNewCartItem(
