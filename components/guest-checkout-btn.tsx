@@ -24,10 +24,9 @@ const GuestCheckOutButton = () => {
   return (
     <Button
       type="button"
-      className="flex items-center justify-center gap-2 w-full"
+      className={`flex items-center justify-center gap-2 w-full ${data?.user.id ? "hidden" : "flex"}`}
       disabled={isPending || foundCourier === false}
       onClick={() => startTransition(onCheckOut)}
-      style={{ display: data?.user.id ? "none" : "block" }}
     >
       {isPending ? (
         <p className="flex items-center justify-center gap-2 w-full">

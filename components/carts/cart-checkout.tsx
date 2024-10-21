@@ -12,9 +12,8 @@ import { findSelectedProductPrice } from "@/lib/helper/productHelpers";
 import { findCartItemVariation, findTotalPricePerCartItem } from "@/lib/helper/cartHelpers";
 import { Button } from "../ui/button";
 import ShippingCost from "./shipping-cost";
-
-const MemberCheckoutButton = dynamic(() => import("@/components/member-checkout-btn"), { ssr: false });
-const GuestCheckOutButton = dynamic(() => import("@/components/guest-checkout-btn"), { ssr: false });
+import MemberCheckoutButton from "../member-checkout-btn";
+import GuestCheckOutButton from "../guest-checkout-btn";
 
 const CartCheckout = () => {
   const { cartItems, subtotalCartItems, totalPrice, foundCourier } = useCartContext();
@@ -33,7 +32,6 @@ const CartCheckout = () => {
     return name;
   }, []);
 
-  console.log("cartItems", cartItems);
   return (
     <>
       {(!!cartItems || cartItems !== null) && (

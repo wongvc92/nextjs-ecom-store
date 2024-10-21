@@ -5,6 +5,7 @@ import { passwordResetTokens, twoFactorConfirmations, twoFactorTokens, users, ve
 import {
   newPasswordSchema,
   resetSignInSchema,
+  settingsSchema,
   signInSchema,
   signUpSchema,
   TNewPasswordSchema,
@@ -18,13 +19,16 @@ import bcrypt from "bcrypt";
 import { auth, signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 import { DEFAULT_REDIRECT_LOGIN } from "@/routes";
-import { generatePasswordResetToken, generateTwoFactorToken, generateVerificationToken } from "@/lib/tokens";
+
 import { getUserByEmail, getUserById } from "@/lib/db/queries/users";
-import { sendPasswordResetEmail, sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/mail";
+
 import { getVerificationTokenByToken } from "@/lib/db/queries/verification-token";
 import { getPasswordResetTokenByToken, getTwoFactorTokenByEmail } from "@/lib/db/queries/auth";
 import { getTwoFactorConfirmationByUserId } from "@/lib/db/queries/two-factor-confirmation";
 import { UserRoleEnum } from "@/@types/next-auth";
+import { revalidatePath } from "next/cache";
+import { generatePasswordResetToken, generateTwoFactorToken, generateVerificationToken } from "@/lib/services/authServices";
+import { sendPasswordResetEmail, sendTwoFactorTokenEmail, sendVerificationEmail } from "@/lib/services/emailServices";
 
 export const registerUser = async (formData: TSignUpFormSchema): Promise<{ error?: string; success?: string }> => {
   try {
@@ -278,6 +282,13 @@ export const settings = async (formData: TSettingsSchema) => {
       error: "Unauthorized",
     };
   }
+  const parseResult = settingsSchema.safeParse(formData);
+
+  if (!parseResult.success) {
+    const errorMessage = parseResult.error.issues.map((issue) => issue.message).join(", ");
+    console.error("errorMessage", errorMessage);
+    return { error: errorMessage };
+  }
 
   const dbUser = await getUserById(session.user.id);
 
@@ -309,27 +320,36 @@ export const settings = async (formData: TSettingsSchema) => {
     };
   }
 
+  const updateData: Partial<TSettingsSchema> = {
+    name: formData.name,
+    email: formData.email,
+    role: formData.role as UserRoleEnum,
+    isTwoFactorEnabled: formData.isTwoFactorEnabled,
+  };
+
   if (formData.password && formData.newPassword && dbUser.password) {
     const passwordMatched = await bcrypt.compare(formData.password, dbUser.password);
     if (!passwordMatched) {
       return {
-        error: "Incorrect password!",
+        error: "Incorrect old password!",
       };
     }
 
     const hashedPassword = await bcrypt.hash(formData.newPassword, 10);
 
-    formData.password = hashedPassword;
-    formData.newPassword = undefined;
+    updateData.password = hashedPassword;
+    await db
+      .update(users)
+      .set({ ...updateData, role: updateData.role as UserRoleEnum })
+      .where(eq(users.id, dbUser.id));
+
+    return { success: "Settings updated" };
   }
 
   await db
     .update(users)
-    .set({
-      ...formData,
-      role: formData.role as UserRoleEnum,
-    })
+    .set({ ...updateData, role: updateData.role as UserRoleEnum })
     .where(eq(users.id, dbUser.id));
-
+  revalidatePath("/settings");
   return { success: "Settings updated" };
 };

@@ -13,30 +13,14 @@ export const signUpSchema = z
 
 export type TSignUpFormSchema = z.infer<typeof signUpSchema>;
 
-export const settingsSchema = z
-  .object({
-    name: z.optional(z.string()),
-    email: z.optional(z.string().email("Invalid email address")),
-    isTwoFactorEnabled: z.optional(z.boolean()),
-    role: z.string(z.enum(["ADMIN", "USER"])),
-    password: z.optional(z.string().min(6, "Password must be at least 6 characters")),
-    newPassword: z.optional(z.string().min(6, "Password must be at least 6 characters")),
-  })
-  .refine(
-    (data) => {
-      if (data.password && !data.newPassword) {
-        return false;
-      }
-      if (data.newPassword && !data.password) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "NewPassword is required.",
-      path: ["newPassword"],
-    }
-  );
+export const settingsSchema = z.object({
+  name: z.optional(z.string()),
+  email: z.optional(z.string().email("Invalid email address")),
+  isTwoFactorEnabled: z.optional(z.boolean()),
+  role: z.string(z.enum(["ADMIN", "USER"])),
+  password: z.optional(z.string().min(6, "Password must be at least 6 characters")),
+  newPassword: z.optional(z.string().min(6, "Password must be at least 6 characters")),
+});
 
 export type TSettingsSchema = z.infer<typeof settingsSchema>;
 
