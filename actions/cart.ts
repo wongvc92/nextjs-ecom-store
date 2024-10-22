@@ -37,14 +37,14 @@ export const increaseCartQuantity = async (formData: FormData): Promise<{ error?
       };
     }
 
-    const result = await validateAndUpdateCartItem(
-      existingcartItem.productId,
-      existingcartItem.quantity + 1,
-      existingcartItem.variationId,
-      existingcartItem.nestedVariationId,
-      existingcartItem.variationType,
-      id
-    );
+    const result = await validateAndUpdateCartItem({
+      productId: existingcartItem.productId,
+      quantity: existingcartItem.quantity + 1,
+      variationId: existingcartItem.variationId,
+      nestedVariationId: existingcartItem.nestedVariationId,
+      variationType: existingcartItem.variationType,
+      cartItemId: id,
+    });
     revalidatePath("/", "layout");
     return result;
   } catch (error: any) {
@@ -117,14 +117,14 @@ export const updateCartQuantity = async (formData: FormData): Promise<{ error?: 
         await deleteCartItem(id, tx);
       });
     } else {
-      const result = await validateAndUpdateCartItem(
-        existingcartItem.productId,
-        newQuantity,
-        existingcartItem.variationId,
-        existingcartItem.nestedVariationId,
-        existingcartItem.variationType,
-        id
-      );
+      const result = await validateAndUpdateCartItem({
+        productId: existingcartItem.productId,
+        quantity: newQuantity,
+        variationId: existingcartItem.variationId,
+        nestedVariationId: existingcartItem.nestedVariationId,
+        variationType: existingcartItem.variationType,
+        cartItemId: id,
+      });
       return result;
     }
     revalidatePath("/", "layout");
@@ -165,15 +165,15 @@ export const updatecartItemsByVariation = async (formData: FormData): Promise<{ 
     let newcartItem;
     if (!cartItemsWitNewVariationId) {
       await db.transaction(async (tx) => {
-        newcartItem = await addNewCartItem(
-          cart.id,
+        newcartItem = await addNewCartItem({
+          cartId: cart.id,
           quantity,
-          existingCartItem.productId,
-          newVariationId,
-          existingCartItem.nestedVariationId,
-          existingCartItem.variationType,
-          tx
-        );
+          productId: existingCartItem.productId,
+          variationId: newVariationId,
+          nestedVariationId: existingCartItem.nestedVariationId,
+          variationType: existingCartItem.variationType,
+          tx,
+        });
 
         await deleteCartItem(id, tx);
       });
@@ -189,13 +189,14 @@ export const updatecartItemsByVariation = async (formData: FormData): Promise<{ 
         error: `Failed to update cart`,
       };
     }
-    const result = await validateAndUpdateCartItem(
-      newcartItem.productId,
-      newcartItem.quantity,
-      newcartItem.variationId,
-      newcartItem.nestedVariationId,
-      newcartItem.variationType
-    );
+    const result = await validateAndUpdateCartItem({
+      productId: newcartItem.productId,
+      quantity: newcartItem.quantity,
+      variationId: newcartItem.variationId,
+      nestedVariationId: newcartItem.nestedVariationId,
+      variationType: newcartItem.variationType,
+      cartItemId: newcartItem.id,
+    });
     revalidatePath("/");
     return result;
   } catch (error: any) {
@@ -240,15 +241,15 @@ export const updatecartItemsByNestedVariation = async (formData: FormData): Prom
     let newcartItem: CartItem | null = null;
     if (!cartItemsWitNewNestedVariationId) {
       newcartItem = await db.transaction(async (tx) => {
-        const newItem = await addNewCartItem(
-          cart.id,
-          existingCartItem.quantity,
-          existingCartItem.productId,
-          existingCartItem.variationId,
-          newNestedVariationId,
-          existingCartItem.variationType,
-          tx
-        );
+        const newItem = await addNewCartItem({
+          cartId: cart.id,
+          quantity: existingCartItem.quantity,
+          productId: existingCartItem.productId,
+          variationId: existingCartItem.variationId,
+          nestedVariationId: newNestedVariationId,
+          variationType: existingCartItem.variationType,
+          tx,
+        });
 
         await deleteCartItem(id, tx);
 
@@ -256,15 +257,15 @@ export const updatecartItemsByNestedVariation = async (formData: FormData): Prom
       });
     } else {
       newcartItem = await db.transaction(async (tx) => {
-        const newItem = await addNewCartItem(
-          cart.id,
-          cartItemsWitNewNestedVariationId.quantity + quantity,
-          cartItemsWitNewNestedVariationId.productId,
-          cartItemsWitNewNestedVariationId.variationId,
-          newNestedVariationId,
-          cartItemsWitNewNestedVariationId.variationType,
-          tx
-        );
+        const newItem = await addNewCartItem({
+          cartId: cart.id,
+          quantity: cartItemsWitNewNestedVariationId.quantity + quantity,
+          productId: cartItemsWitNewNestedVariationId.productId,
+          variationId: cartItemsWitNewNestedVariationId.variationId,
+          nestedVariationId: newNestedVariationId,
+          variationType: cartItemsWitNewNestedVariationId.variationType,
+          tx,
+        });
 
         await deleteCartItem(id, tx);
         await deleteCartItem(cartItemsWitNewNestedVariationId.id, tx);
@@ -278,13 +279,14 @@ export const updatecartItemsByNestedVariation = async (formData: FormData): Prom
       };
     }
 
-    const result = await validateAndUpdateCartItem(
-      newcartItem.productId,
-      newcartItem.quantity,
-      newcartItem.variationId,
-      newcartItem.nestedVariationId,
-      newcartItem.variationType
-    );
+    const result = await validateAndUpdateCartItem({
+      productId: newcartItem.productId,
+      quantity: newcartItem.quantity,
+      variationId: newcartItem.variationId,
+      nestedVariationId: newcartItem.nestedVariationId,
+      variationType: newcartItem.variationType,
+      cartItemId: newcartItem.id,
+    });
     revalidatePath("/");
     return result;
   } catch (error: any) {
@@ -304,16 +306,9 @@ export const removeCart = async (formData: FormData): Promise<{ error?: string; 
       };
     }
     const { id } = validatedData.data;
-
-    const existingcartItem = await getExistingCartItem(id);
-
-    if (!existingcartItem) {
-      return {
-        error: "Cart item not found or already deleted",
-      };
-    }
+    console.log("id", id);
     await db.transaction(async (tx) => {
-      await deleteCartItem(existingcartItem.id, tx);
+      return await deleteCartItem(id, tx);
     });
 
     revalidatePath("/");
@@ -321,8 +316,9 @@ export const removeCart = async (formData: FormData): Promise<{ error?: string; 
       success: "cart item deleted",
     };
   } catch (error) {
+    console.log(`Failed to delete cart: ${error}`);
     return {
-      error: `Failed to delete cart: ${error}`,
+      error: "Failed to delete cart",
     };
   }
 };
@@ -386,21 +382,29 @@ export const addToCart = async (formData: FormData): Promise<{ error?: string; s
 
     let result = { error: "", success: "" };
     if (existingProductInCartItem) {
-      const validationResult = await validateAndUpdateCartItem(
-        existingProductInCartItem.productId,
-        existingProductInCartItem.quantity + 1,
-        existingProductInCartItem.variationId,
-        existingProductInCartItem.nestedVariationId,
-        existingProductInCartItem.variationType,
-        existingProductInCartItem.id
-      );
+      const validationResult = await validateAndUpdateCartItem({
+        productId: existingProductInCartItem.productId,
+        quantity: existingProductInCartItem.quantity + 1,
+        variationId: existingProductInCartItem.variationId,
+        nestedVariationId: existingProductInCartItem.nestedVariationId,
+        variationType: existingProductInCartItem.variationType,
+        cartItemId: existingProductInCartItem.id,
+      });
       result = {
         error: validationResult.error || "",
         success: validationResult.success || "",
       };
     } else {
       await db.transaction(async (tx) => {
-        await addNewCartItem(cart.id, 1, productId, selectedVariationId!, selectedNestedVariationId!, variationType, tx);
+        await addNewCartItem({
+          cartId: cart.id,
+          quantity: 1,
+          productId: productId,
+          variationId: selectedVariationId,
+          nestedVariationId: selectedNestedVariationId,
+          variationType,
+          tx,
+        });
       });
     }
 

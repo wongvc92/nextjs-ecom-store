@@ -24,28 +24,31 @@ const RemoveCartBtn: React.FC<RemoveCartBtnProps> = ({ className }) => {
   const { cartItem } = useCartItemContext();
 
   const onRemoveItem = async () => {
-    dispatch({
-      type: "REMOVE_CART_ITEM",
-      payload: {
-        ...cartItem,
-        id: cartItem?.id as string,
-        productId: cartItem?.product?.id as string,
-        variationId: (cartItem?.variationId as string) ?? null,
-        nestedVariationId: (cartItem?.nestedVariationId as string) ?? null,
-        variationType: cartItem?.variationType as string,
-        quantity: 1,
-        product: cartItem?.product as IProduct,
-        createdAt: cartItem?.createdAt as Date | null,
-        updatedAt: cartItem?.updatedAt as Date | null,
-        cartId: "",
-      },
+    startTransition(async () => {
+      dispatch({
+        type: "REMOVE_CART_ITEM",
+        payload: {
+          ...cartItem,
+          id: cartItem?.id as string,
+          productId: cartItem?.product?.id as string,
+          variationId: (cartItem?.variationId as string) ?? null,
+          nestedVariationId: (cartItem?.nestedVariationId as string) ?? null,
+          variationType: cartItem?.variationType as string,
+          quantity: 1,
+          product: cartItem?.product as IProduct,
+          createdAt: cartItem?.createdAt as Date | null,
+          updatedAt: cartItem?.updatedAt as Date | null,
+          cartId: "",
+        },
+      });
+      const formData = new FormData();
+      formData.append("id", cartItem?.id as string);
+      const res = await removeCart(formData);
+      if (res.error) {
+        toast.error(res.error);
+        return;
+      }
     });
-    const formData = new FormData();
-    formData.append("id", cartItem?.id as string);
-    const res = await removeCart(formData);
-    if (res.error) {
-      toast.error(res.error);
-    }
   };
 
   return (

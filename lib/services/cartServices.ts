@@ -7,7 +7,7 @@ import { Cart, getGuestCart, getUserCart } from "../db/queries/carts";
 import { addHours } from "date-fns";
 import { mergecartItem } from "../helper/cartHelpers";
 import { createJWT } from "../helper/jwtHelpers";
-import { addNewCartItem, deleteCartItem } from "./cartItemServices";
+import { addNewCartItem, deleteCartItemByCartId, validateAndUpdateCartItem } from "./cartItemServices";
 import { resetCookie, setCookie } from "../helper/cookieHelpers";
 
 export const deleteCart = async (cartId: string, tx: any) => {
@@ -36,7 +36,9 @@ export async function createCart(): Promise<Cart> {
 
   let newCart;
   if (session) {
-    newCart = await createGuestCart();
+    newCart = await db.transaction(async (tx) => {
+      return await createUserCart(session.user.id, tx);
+    });
   } else {
     newCart = await createGuestCart();
   }
@@ -53,35 +55,53 @@ export async function mergeAnonymouseCartIntoUserCart(userId: string) {
   if (!guestCart) return;
 
   const userCart = await getUserCart(userId);
-
+  const newCartItems: CartItem[] = [];
   await db.transaction(async (tx) => {
     if (userCart) {
-      await deleteCartItem(userCart.id, tx);
+      await deleteCartItemByCartId(userCart.id, tx);
       const mergedcartItem = mergecartItem(guestCart.cartItems as CartItem[], userCart.cartItems as CartItem[]);
 
       for (const mergedCartItem of mergedcartItem) {
-        await addNewCartItem(
-          userCart.id,
-          mergedCartItem.quantity,
-          mergedCartItem.productId,
-          mergedCartItem.variationId,
-          mergedCartItem.nestedVariationId,
-          mergedCartItem.variationType,
-          tx
-        );
+        const newCartItem = await addNewCartItem({
+          cartId: userCart.id,
+          quantity: mergedCartItem.quantity,
+          productId: mergedCartItem.productId,
+          variationId: mergedCartItem.variationId,
+          nestedVariationId: mergedCartItem.nestedVariationId,
+          variationType: mergedCartItem.variationType,
+          tx,
+        });
+        if (newCartItem) {
+          newCartItems.push(newCartItem);
+        }
       }
     } else {
       const newCart = await createUserCart(userId, tx);
-      for (const localCartItem of guestCart.cartItems as CartItem[])
-        await addNewCartItem(
-          newCart.id,
-          localCartItem.quantity,
-          localCartItem.productId,
-          localCartItem.variationId,
-          localCartItem.nestedVariationId,
-          localCartItem.variationType,
-          tx
-        );
+      for (const localCartItem of guestCart.cartItems as CartItem[]) {
+        const newCartItem = await addNewCartItem({
+          cartId: newCart.id,
+          quantity: localCartItem.quantity,
+          productId: localCartItem.productId,
+          variationId: localCartItem.variationId,
+          nestedVariationId: localCartItem.nestedVariationId,
+          variationType: localCartItem.variationType,
+          tx,
+        });
+        if (newCartItem) {
+          newCartItems.push(newCartItem);
+        }
+      }
+    }
+
+    for (const newCartItem of newCartItems) {
+      await validateAndUpdateCartItem({
+        productId: newCartItem.productId,
+        quantity: newCartItem.quantity,
+        variationId: newCartItem.variationId,
+        nestedVariationId: newCartItem.nestedVariationId,
+        variationType: newCartItem.variationType,
+        cartItemId: newCartItem.id,
+      });
     }
     await deleteCart(guestCart.id, tx);
     resetCookie("guestCartId");

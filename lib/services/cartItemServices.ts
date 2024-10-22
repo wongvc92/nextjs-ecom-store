@@ -1,22 +1,35 @@
 import { eq } from "drizzle-orm";
 import { CartItem, cartItems as cartItemsTable } from "../db/schema/cartItems";
 import { db } from "../db";
-import { handleStockErrors, validateProductStock } from "./productServices";
+import { validateProductStock } from "./productServices";
 import { PgTransaction } from "drizzle-orm/pg-core";
 
-export const deleteCartItem = async (cartId: string, tx: PgTransaction<any, any, any>) => {
+export const deleteCartItemByCartId = async (cartId: string, tx: PgTransaction<any, any, any>) => {
   return await tx.delete(cartItemsTable).where(eq(cartItemsTable.cartId, cartId));
 };
 
-export const addNewCartItem = async (
-  cartId: string,
-  quantity: number,
-  productId: string,
-  variationId: string | null,
-  nestedVariationId: string | null,
-  variationType: string,
-  tx: PgTransaction<any, any, any>
-): Promise<CartItem | null> => {
+export const deleteCartItem = async (id: string, tx: PgTransaction<any, any, any>) => {
+  return await tx.delete(cartItemsTable).where(eq(cartItemsTable.id, id));
+};
+
+interface AddNewCartItemProps {
+  cartId: string;
+  quantity: number;
+  productId: string;
+  variationId: string | null;
+  nestedVariationId: string | null;
+  variationType: string;
+  tx: PgTransaction<any, any, any>;
+}
+export const addNewCartItem = async ({
+  cartId,
+  quantity,
+  productId,
+  variationId,
+  nestedVariationId,
+  variationType,
+  tx,
+}: AddNewCartItemProps): Promise<CartItem | null> => {
   const [newCartItem] = await tx
     .insert(cartItemsTable)
     .values({
@@ -44,20 +57,44 @@ export const updateExistingCartItemQuantity = async (cartItemId: string, quantit
   return updatedCartItem;
 };
 
-export const validateAndUpdateCartItem = async (
-  productId: string,
-  quantity: number,
-  variationId: string | null,
-  nestedVariationId: string | null,
-  variationType?: string,
-  cartItemId?: string
-) => {
-  const { stockCount, maxPurchase, isArchived } = await validateProductStock(productId, variationId!, nestedVariationId!, variationType!);
-  const error = await handleStockErrors(stockCount, isArchived, maxPurchase, quantity, cartItemId!);
-  if (error) {
-    return { error };
-  }
+interface ValidateAndUpdateCartItemProps {
+  cartItemId: string;
+  quantity: number;
+  productId: string;
+  variationId: string | null;
+  nestedVariationId: string | null;
+  variationType: string;
+}
 
-  await updateExistingCartItemQuantity(cartItemId!, quantity);
-  return { success: "Cart updated successfully" };
+export const validateAndUpdateCartItem = async ({
+  cartItemId,
+  quantity,
+  productId,
+  variationId,
+  nestedVariationId,
+  variationType,
+}: ValidateAndUpdateCartItemProps) => {
+  try {
+    const { stockCount, maxPurchase, isArchived } = await validateProductStock(productId, variationId!, nestedVariationId!, variationType!);
+
+    if (quantity > maxPurchase) {
+      await updateExistingCartItemQuantity(cartItemId, maxPurchase);
+      return { error: `Only ${maxPurchase} item per single variation or product allowed` };
+    }
+    if (quantity > stockCount) {
+      await updateExistingCartItemQuantity(cartItemId, stockCount);
+      return { error: `Only ${stockCount} unit left for this product` };
+    }
+    if (isArchived) {
+      return { error: `Sorry, this product is no longer available.` };
+    }
+    if (stockCount === 0) {
+      return { error: `Item out of stock.` };
+    }
+
+    return { success: "Cart updated successfully" };
+  } catch (error) {
+    console.log("Failed validate cart", error);
+    return { error: "Failed validate cart" };
+  }
 };

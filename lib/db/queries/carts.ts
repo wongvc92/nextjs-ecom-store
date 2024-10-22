@@ -20,7 +20,7 @@ export interface Cart {
   cartItems: CartItemWithProduct[];
 }
 
-export const getCart = cache(async (): Promise<Cart | null> => {
+export const getCart = async (): Promise<Cart | null> => {
   const session = await auth();
 
   let cart: Cart | null = null;
@@ -59,7 +59,7 @@ export const getCart = cache(async (): Promise<Cart | null> => {
     userId: (cart.userId as string) ?? null,
     cartItems: itemsWithoutNullProduct,
   };
-});
+};
 
 export const getExistingCartItem = async (id: string): Promise<CartItem | null> => {
   const [existingcartItem] = await db.select().from(cartItemsTable).where(eq(cartItemsTable.id, id));
