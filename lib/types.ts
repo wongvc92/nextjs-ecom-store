@@ -167,6 +167,23 @@ export interface IOrderItem {
   updatedAt: string;
 }
 
+export const OrderStatusEnum = {
+  pending: "pending",
+  cancelled: "cancelled",
+  to_ship: "to_ship",
+  shipped: "shipped",
+  completed: "completed",
+} as const;
+
+export type OrderStatusEnum = (typeof OrderStatusEnum)[keyof typeof OrderStatusEnum];
+
+export interface OrderStatusHistory {
+  id: string;
+  orderId: string;
+  status: OrderStatusEnum;
+  createdAt: Date;
+  updatedAt: Date;
+}
 export interface IOrder {
   id: string;
   customerId: string;
@@ -185,6 +202,7 @@ export interface IOrder {
   updatedAt: string;
   orderItems: IOrderItem[];
   shippings: IShipping[];
+  orderStatusHistories: OrderStatusHistory[];
 }
 
 export interface IbannerImage {

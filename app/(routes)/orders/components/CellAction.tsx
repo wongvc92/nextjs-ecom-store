@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { IOrder } from "@/lib/types";
+import { IOrder, OrderStatusEnum } from "@/lib/types";
 import { updateOrderStatusByOrderId } from "@/actions/order";
 
 interface CellActionProps {
@@ -51,7 +51,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <ScrollText className="mr-2 h-4 w-4" />
             Details
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onOrderReceived(data.id)}>
+          <DropdownMenuItem
+            onClick={() => onOrderReceived(data.id)}
+            className={`${data?.orderStatusHistories?.map((item) => item.status).includes(OrderStatusEnum.shipped) ? "flex items-center" : "hidden"}`}
+          >
             <PackageIcon className="mr-2 h-4 w-4" />
             Order received
           </DropdownMenuItem>
