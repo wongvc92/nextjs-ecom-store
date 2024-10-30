@@ -2,20 +2,21 @@
 
 import FavouriteButton from "@/components/favourite-btn";
 import { IProduct } from "@/lib/types";
-import { getMinMaxPrices } from "@/lib/utils";
+import { cn, getMinMaxPrices } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useMemo } from "react";
 
 interface ProductItemProps {
   product: IProduct;
+  classname?: string;
 }
 
-const ProductCard: React.FC<ProductItemProps> = ({ product }) => {
+const ProductCard: React.FC<ProductItemProps> = ({ product, classname }) => {
   const memoizedMinMaxPrice = useMemo(() => getMinMaxPrices(product), [product]);
 
   return (
-    <div className="w-full relative">
+    <div className={cn("w-full relative", classname)}>
       <Link href={`/products/${product.id}`}>
         <div className="aspect-square bg-gray-100 relative overflow-hidden group rounded-md  ">
           <Image
