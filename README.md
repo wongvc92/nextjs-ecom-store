@@ -2,6 +2,55 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+stacks
+-nextjs 14
+-zod
+-stripe
+-authjs
+-shadcn ui
+-drizzle orm
+-tanstack table
+-react swipeable
+
+Features
+
+1. Home page
+
+- banner image.
+- Featured products with sliders.
+- search products.
+
+2. Products page
+
+- Filters and sorting.
+- like button.
+
+3. Individual product page
+- variation button
+- like button
+- products details
+- related products slider
+
+4.  orders page
+
+- Display and filters total, cancelled, pending, to ship, shipped, completed orders.
+- each orderId page will display history info, logisctic info, order item and order status.
+- support table filter functionality.
+
+5. cart Sheet / checkout
+
+- display cart item.
+- remove cart item.
+- edit cart item quantity.
+- calculate shipping cost before checkout.
+- merge cart item by changing variation.
+- auto merge annonymous cart into logged user cart.
+
+6. favourites page
+- liked products will be shown.
+- can unlike product
+- can add to cart.
+
 First, run the development server:
 
 ```bash
