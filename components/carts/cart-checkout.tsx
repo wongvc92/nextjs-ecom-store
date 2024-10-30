@@ -6,7 +6,6 @@ import React, { useCallback, useState } from "react";
 import { useCartContext } from "../../providers/cart.provider";
 import { currencyFormatter } from "@/lib/utils";
 import { CartItemWithProduct } from "@/lib/db/queries/carts";
-import dynamic from "next/dynamic";
 import { IProduct } from "@/lib/types";
 import { findSelectedProductPrice } from "@/lib/helper/productHelpers";
 import { findCartItemVariation, findTotalPricePerCartItem } from "@/lib/helper/cartHelpers";
@@ -34,7 +33,7 @@ const CartCheckout = () => {
 
   return (
     <>
-      {(!!cartItems || cartItems !== null) && (
+      {cartItems && cartItems.length > 0 && (
         <div className="w-full rounded-md bg-gray-50 px-4 py-10 bg-inherit">
           <div className="flex flex-col space-y-4">
             <div className="flex items-center justify-between">

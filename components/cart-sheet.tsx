@@ -42,7 +42,7 @@ const CartSheet = () => {
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="w-full overflow-y-scroll no-scrollbar">
+      <SheetContent className="w-full overflow-y-scroll">
         <Cart />
         <CartCheckout />
       </SheetContent>
