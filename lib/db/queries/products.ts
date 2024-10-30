@@ -112,3 +112,18 @@ export const getProductById = async (productId: string): Promise<IProduct | null
     return null;
   }
 };
+
+export const getproductCount = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_ADMIN_URL}/api/products/count`, {
+    cache: "no-cache",
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    console.log("Failed fetch product count", err);
+    throw new Error("Failed fetch product count");
+  }
+
+  const data = await res.json();
+  return data;
+};
