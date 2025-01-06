@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const variationTypeEnum = z.string(z.enum(["NONE", "VARIATION", "NESTED_VARIATION"]));
-const allowedImageDomains = ["nextjs-dashboard-website.s3.ap-southeast-1.amazonaws.com"];
+const allowedImageDomains = ["nextjs-ecom-admin.s3.ap-southeast-1.amazonaws.com"];
 
 export const increaseCartSchema = z.object({
   id: z.string().uuid(),
